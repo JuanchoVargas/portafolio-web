@@ -43,6 +43,8 @@ metrics:
 Texto del proyecto en Markdown.
 ```
 
+Reglas del encabezado: `tagline` admite máximo 110 caracteres y `year` es opcional (por ejemplo `year: "2026"`). El archivo debe existir en los dos idiomas; si falta uno, el botón de idioma lleva a una página que no existe.
+
 El proyecto aparece solo en la portada y recibe su propia página. Con `draft: true` queda oculto. Si no tiene `cover`, el sitio dibuja una portada con el título.
 
 ## Dónde está cada cosa

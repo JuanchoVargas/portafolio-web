@@ -21,7 +21,7 @@ highlights:
   - "Tenant isolation enforced by a global EF Core filter and proven by an end-to-end test with two clinics"
   - "Clinical photos served only through HMAC-signed URLs that expire after 10 minutes"
   - "Every authenticated request re-checks the account, its role and the clinic's status"
-  - "Batch inventory with first-expired-first-out picking and a health traceability report"
+  - "Batch inventory with first-expired-first-out picking and a regulatory traceability report"
 metrics:
   - value: "313"
     label: "automated tests"
@@ -33,11 +33,11 @@ metrics:
 
 ## The problem
 
-An aesthetic clinic in Colombia usually runs on a paper agenda, a spreadsheet for stock and a notebook for cash. Patient records hold health data and before-and-after photos, so a shared system has to keep each clinic's data strictly apart from everyone else's.
+An aesthetic clinic in Colombia usually runs on a paper appointment book, a spreadsheet for stock and a notebook for cash. Patient records hold health data and before-and-after photos, so a shared system has to keep each clinic's data strictly apart from everyone else's.
 
 ## What I built
 
-A web application where each clinic is a tenant with its own branches and three roles: owner, front desk and aesthetician. It covers patients and bulk import from Excel or CSV, clinical history with photo comparison, informed consent signed on screen, scheduling, session packages, batch inventory with expiry alerts, sales with per-line VAT and split payments, and a cash drawer per user and branch. A platform level above the clinics manages accounts and white-label sales channels.
+A web application where each clinic is a tenant with its own branches and three roles: owner, front desk and aesthetician. It covers patient records with bulk import from Excel or CSV, clinical history with photo comparison, informed consent signed on screen, scheduling, session packages, batch inventory with expiry alerts, sales with per-line VAT and split payments, and a cash drawer per user and branch. A platform level above the clinics manages accounts and white-label sales channels.
 
 The backend is a layered ASP.NET Core API on SQL Server. The frontend is a React SPA that works on a phone and installs as a PWA.
 

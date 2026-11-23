@@ -42,6 +42,7 @@ const pageDescription = description ?? t.metaDescription;
           } catch (e) {}
           var theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
           document.documentElement.dataset.theme = theme;
+          document.documentElement.classList.add('js');
         };
         apply();
         document.addEventListener('astro:after-swap', apply);

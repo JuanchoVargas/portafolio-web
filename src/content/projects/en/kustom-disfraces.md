@@ -1,6 +1,6 @@
 ---
 title: "Kustom Disfraces"
-tagline: "Headless online store for a costume shop in Bogotá, with a sales bot and back office"
+tagline: "Headless online store for a costume shop in Bogotá, with a sales bot"
 kind: case-study
 status: "In production"
 order: 3
@@ -35,7 +35,7 @@ Around the store I built the tools the team works with: a sales bot with typo-to
 
 ## Security
 
-The browser only talks to the site's own endpoints. Keys for WooCommerce, Mercado Pago, Meta and email live on the server, with separate read and write keys for WooCommerce. The payment webhook requires a valid signature with a recent timestamp and then asks Mercado Pago for the real payment status instead of trusting the notification. Meta webhooks are verified over the raw request body. The admin panel allows five login attempts per IP every 15 minutes and stores an HMAC of the IP, not the IP. Logs mask customer identifiers.
+The browser only talks to the site's own endpoints. Keys for WooCommerce, Mercado Pago, Meta and email live on the server, with separate read and write keys for WooCommerce. The payment webhook requires a valid signature with a recent timestamp and then asks Mercado Pago for the real payment status instead of trusting the notification. Meta webhooks are verified over the raw request body. The admin panel limits login attempts per IP and stores an HMAC of the IP, not the IP. Logs mask customer identifiers.
 
 ## Result
 

@@ -35,7 +35,7 @@ Alrededor de la tienda construí las herramientas con las que trabaja el equipo:
 
 ## Seguridad
 
-El navegador solo habla con los endpoints del propio sitio. Las llaves de WooCommerce, Mercado Pago, Meta y el correo viven en el servidor, y WooCommerce tiene una llave de lectura y otra de escritura. El webhook de pagos exige una firma válida y reciente, y después consulta el estado real del pago en Mercado Pago en lugar de confiar en la notificación. Los webhooks de Meta se verifican sobre el cuerpo crudo. El panel admite cinco intentos de acceso por IP cada 15 minutos y guarda un HMAC de la IP, no la IP. Los logs enmascaran los identificadores de los clientes.
+El navegador solo habla con los endpoints del propio sitio. Las llaves de WooCommerce, Mercado Pago, Meta y el correo viven en el servidor, y WooCommerce tiene una llave de lectura y otra de escritura. El webhook de pagos exige una firma válida y reciente, y después consulta el estado real del pago en Mercado Pago en lugar de confiar en la notificación. Los webhooks de Meta se verifican sobre el cuerpo crudo. El panel limita los intentos de acceso por IP y guarda un HMAC de la IP, no la IP. Los logs enmascaran los identificadores de los clientes.
 
 ## Resultado
 

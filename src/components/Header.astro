@@ -18,7 +18,7 @@ const other = switchLangPath(Astro.url.pathname, lang);
       <span class="brand__mark" aria-hidden="true">JD</span>
       <span class="brand__name">{site.shortName}</span>
     </a>
-    <nav class="nav" aria-label="Primary">
+    <nav class="nav" aria-label={t.navLabel}>
       <a href={`${home}#work`}>{t.navWork}</a>
       <a href={`${home}#services`}>{t.navServices}</a>
       <a href={`${home}#about`}>{t.navAbout}</a>

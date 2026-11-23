@@ -34,7 +34,7 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
       <p class="project__tagline">{d.tagline}</p>
       <p class="pcard__links">
         {d.live && <a class="btn btn--primary" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
-        {d.repo && <a class="btn" href={d.repo} rel="noopener">{t.viewCode} ↗</a>}
+        {d.repo && <a class="btn" href={d.repo} rel="noopener">{d.kind === 'source' ? t.viewCode : t.viewDocs} ↗</a>}
       </p>
     </header>
 

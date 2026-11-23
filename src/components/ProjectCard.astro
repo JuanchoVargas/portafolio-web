@@ -43,7 +43,7 @@ const number = String(index + 1).padStart(2, '0');
     <p class="pcard__links">
       <a class="link-arrow" href={href}>{t.viewProject}</a>
       {d.live && <a class="link-quiet" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
-      {d.repo && <a class="link-quiet" href={d.repo} rel="noopener">{t.viewCode} ↗</a>}
+      {d.repo && <a class="link-quiet" href={d.repo} rel="noopener">{d.kind === 'source' ? t.viewCode : t.viewDocs} ↗</a>}
     </p>
   </div>
   <a class="pcard__shot" href={href} tabindex="-1" aria-hidden="true">

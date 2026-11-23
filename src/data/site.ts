@@ -2,7 +2,6 @@
 export const site = {
   name: 'Juan Diego Vargas',
   shortName: 'JD Vargas',
-  location: 'Bogotá, Colombia',
   github: 'https://github.com/JuanchoVargas',
   linkedin: 'https://www.linkedin.com/in/juandiegovargas1218',
   // Correo de contacto público. Vacío: el sitio solo muestra LinkedIn y GitHub.

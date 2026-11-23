@@ -24,11 +24,11 @@ metrics:
 
 ## The problem
 
-A distributor sells many brands, each with its own presentations, margins and price lists, and delivers along fixed routes. Stock, purchasing and cash have to agree with what was sold. I wanted one installation that could serve several companies without their data ever mixing.
+A distributor sells many brands, each with its own pack sizes, margins and price lists, and delivers along fixed routes. Stock, purchasing and cash have to agree with what was sold. I wanted one installation that could serve several companies without their data ever mixing.
 
 ## What I built
 
-A REST API in ASP.NET Core with a Vue 3 single-page app. The modules cover the catalog by brand with a setup wizard, price lists with margins per brand, customers with a delivery route derived from their locality, suppliers and purchase orders with suggested quantities, warehouses with stock ledger and valued inventory, quotes, orders and counter sales, cash accounts with a daily close, a dashboard and user management. Products, customers and stock can be imported from Excel with a preview.
+A REST API in ASP.NET Core with a Vue 3 single-page app. The modules cover the catalog by brand with a setup wizard, price lists with margins per brand, customers with a delivery route derived from their district, suppliers and purchase orders with suggested quantities, warehouses with stock ledger and inventory valuation, quotes, orders and counter sales, cash accounts with a daily close, a dashboard and user management. Products, customers and stock can be imported from Excel with a preview.
 
 ## Security
 
