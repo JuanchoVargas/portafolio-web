@@ -1,0 +1,41 @@
+---
+// Captura dentro de un marco de navegador. Sin imagen, dibuja una portada tipográfica.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  image?: ImageMetadata;
+  alt: string;
+  title: string;
+  url?: string;
+  eager?: boolean;
+}
+const { image, alt, title, url, eager = false } = Astro.props;
+const host = url ? new URL(url).host.replace(/^www\./, '') : title.toLowerCase().replace(/\s+/g, '-');
+---
+
+<figure class="shot">
+  <div class="shot__bar" aria-hidden="true">
+    <span class="shot__dots"><i></i><i></i><i></i></span>
+    <span class="shot__url">{host}</span>
+  </div>
+  {
+    image ? (
+      <Image
+        src={image}
+        alt={alt}
+        widths={[480, 800, 1200, 1600]}
+        sizes="(min-width: 960px) 56vw, 92vw"
+        loading={eager ? 'eager' : 'lazy'}
+        class="shot__img"
+      />
+    ) : (
+      <div class="shot__blank" role="img" aria-label={alt}>
+        <span class="shot__blank-title">{title}</span>
+        <span class="shot__blank-line" />
+        <span class="shot__blank-line shot__blank-line--b" />
+        <span class="shot__blank-line shot__blank-line--c" />
+      </div>
+    )
+  }
+</figure>

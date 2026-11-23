@@ -1,0 +1,125 @@
+---
+import { render } from 'astro:content';
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Shot from './Shot.astro';
+import { ui, type Lang } from '../i18n/ui';
+import { getProjects, homePath, projectPath, slugOf, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+}
+const { project, lang } = Astro.props;
+const t = ui[lang];
+const d = project.data;
+const { Content } = await render(project);
+
+const all = await getProjects(lang);
+const position = all.findIndex((p) => p.id === project.id);
+const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
+---
+
+<Base lang={lang} title={d.title} description={d.tagline}>
+  <article class="project">
+    <header class="wrap project__head">
+      <a class="link-back" href={`${homePath(lang)}#work`}>← {t.backToWork}</a>
+      <p class="pcard__meta">
+        <span class:list={['tag', d.kind === 'source' && 'tag--on']}>
+          {d.kind === 'source' ? t.kindSource : t.kindCase}
+        </span>
+        <span class="pcard__status">{d.status}</span>
+      </p>
+      <h1 class="project__title">{d.title}</h1>
+      <p class="project__tagline">{d.tagline}</p>
+      <p class="pcard__links">
+        {d.live && <a class="btn btn--primary" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
+        {d.repo && <a class="btn" href={d.repo} rel="noopener">{t.viewCode} ↗</a>}
+      </p>
+    </header>
+
+    {
+      d.metrics.length > 0 && (
+        <div class="wrap">
+          <dl class="stats stats--project">
+            {d.metrics.map((m) => (
+              <div class="stats__item">
+                <dt>{m.label}</dt>
+                <dd>{m.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      )
+    }
+
+    <div class="wrap project__cover">
+      <Shot image={d.cover} alt={d.title} title={d.title} url={d.live} eager />
+    </div>
+
+    <div class="wrap project__body">
+      <div class="prose">
+        <Content />
+      </div>
+      <aside class="project__side">
+        <h2 class="about__h">{t.projectStack}</h2>
+        <ul class="chips">
+          {d.stack.map((s) => <li>{s}</li>)}
+        </ul>
+        {
+          d.year && (
+            <>
+              <h2 class="about__h">{t.projectYear}</h2>
+              <p class="project__fact">{d.year}</p>
+            </>
+          )
+        }
+        {
+          d.highlights.length > 0 && (
+            <>
+              <h2 class="about__h">{t.projectHighlights}</h2>
+              <ul class="pcard__points">
+                {d.highlights.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </aside>
+    </div>
+
+    {
+      d.gallery.length > 0 && (
+        <section class="wrap project__gallery">
+          <h2 class="eyebrow">{t.projectGallery}</h2>
+          <div class="gallery">
+            {d.gallery.map((g) => (
+              <figure class="gallery__item">
+                <Image
+                  src={g.src}
+                  alt={g.alt}
+                  widths={[480, 800, 1200]}
+                  sizes="(min-width: 960px) 44vw, 92vw"
+                  loading="lazy"
+                />
+                <figcaption>{g.alt}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      next && (
+        <a class="next" href={projectPath(lang, slugOf(next))}>
+          <div class="wrap next__in">
+            <span class="eyebrow">{t.nextProject}</span>
+            <span class="next__title">{next.data.title} →</span>
+          </div>
+        </a>
+      )
+    }
+  </article>
+</Base>

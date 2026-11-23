@@ -1,0 +1,52 @@
+---
+import Shot from './Shot.astro';
+import { ui, type Lang } from '../i18n/ui';
+import { projectPath, slugOf, type Project } from '../lib/projects';
+
+interface Props {
+  project: Project;
+  lang: Lang;
+  index: number;
+}
+const { project, lang, index } = Astro.props;
+const t = ui[lang];
+const d = project.data;
+const href = projectPath(lang, slugOf(project));
+const number = String(index + 1).padStart(2, '0');
+---
+
+<article class="pcard" data-reveal data-glow>
+  <div class="pcard__text">
+    <p class="pcard__meta">
+      <span class="pcard__num">{number}</span>
+      <span class:list={['tag', d.kind === 'source' && 'tag--on']}>
+        {d.kind === 'source' ? t.kindSource : t.kindCase}
+      </span>
+      <span class="pcard__status">{d.status}</span>
+    </p>
+    <h3 class="pcard__title">
+      <a href={href}>{d.title}</a>
+    </h3>
+    <p class="pcard__tagline">{d.tagline}</p>
+    {
+      d.highlights.length > 0 && (
+        <ul class="pcard__points">
+          {d.highlights.slice(0, 3).map((h) => (
+            <li>{h}</li>
+          ))}
+        </ul>
+      )
+    }
+    <ul class="chips" aria-label={t.projectStack}>
+      {d.stack.map((s) => <li>{s}</li>)}
+    </ul>
+    <p class="pcard__links">
+      <a class="link-arrow" href={href}>{t.viewProject}</a>
+      {d.live && <a class="link-quiet" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
+      {d.repo && <a class="link-quiet" href={d.repo} rel="noopener">{t.viewCode} ↗</a>}
+    </p>
+  </div>
+  <a class="pcard__shot" href={href} tabindex="-1" aria-hidden="true">
+    <Shot image={d.cover} alt="" title={d.title} url={d.live} eager={index === 0} />
+  </a>
+</article>
