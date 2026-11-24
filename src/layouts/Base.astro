@@ -78,15 +78,6 @@ const pageDescription = description ?? t.metaDescription;
           items.forEach((el) => io.observe(el));
         }
 
-        // Brillo que sigue al puntero en las tarjetas.
-        document.querySelectorAll<HTMLElement>('[data-glow]').forEach((el) => {
-          el.addEventListener('pointermove', (e) => {
-            const r = el.getBoundingClientRect();
-            el.style.setProperty('--gx', `${e.clientX - r.left}px`);
-            el.style.setProperty('--gy', `${e.clientY - r.top}px`);
-          });
-        });
-
         const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
         toggle?.addEventListener('click', () => {
           const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';

@@ -1,10 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ProjectCard from './ProjectCard.astro';
-import Shot from './Shot.astro';
+import Scene from './Scene.astro';
+import ContactForm from './ContactForm.astro';
 import { ui, stackList, type Lang } from '../i18n/ui';
 import { getProjects } from '../lib/projects';
 import { site } from '../data/site';
+import hello from '../assets/personaje/01-saludo.png';
 
 interface Props {
   lang: Lang;
@@ -12,136 +15,172 @@ interface Props {
 const { lang } = Astro.props;
 const t = ui[lang];
 const projects = await getProjects(lang);
-const lead = projects.find((p) => p.data.cover);
+// En desarrollo el formulario se muestra aunque no tenga a dónde enviar.
+const showForm = Boolean(site.formEndpoint) || import.meta.env.DEV;
 ---
 
 <Base lang={lang}>
-  <section class="hero">
-    <div class="hero__bg" aria-hidden="true"></div>
-    <div class="wrap hero__in">
-      <div class="hero__text">
-      {
-        site.available && (
-          <p class="pill hero__pill">
-            <span class="pill__dot" aria-hidden="true" />
-            {t.available}
-          </p>
-        )
-      }
-      <p class="eyebrow hero__role">{t.role}</p>
-      <h1 class="hero__title">
-        <span class="line">{t.heroA}</span>
-        <span class="line"><em>{t.heroEm}</em> {t.heroB}</span>
-      </h1>
-      <p class="hero__lead">{t.heroLead}</p>
-      <p class="hero__cta">
-        <a class="btn btn--primary" href="#work">{t.ctaWork}</a>
-        <a class="btn" href="#contact">{t.ctaContact}</a>
-      </p>
-      </div>
-      {
-        lead && (
-          <div class="hero__visual" aria-hidden="true">
-            <div class="hero__tilt">
-              <Shot image={lead.data.cover} alt="" title={lead.data.title} url={lead.data.live} eager />
-            </div>
-            {lead.data.metrics.slice(0, 2).map((m, i) => (
-              <p class:list={['float', `float--${i}`]}>
-                <strong>{m.value}</strong>
-                <span>{m.label}</span>
-              </p>
-            ))}
-          </div>
-        )
-      }
-      <dl class="stats">
+  <div class="wrap scene">
+    <div class="scene__content">
+      <section class="hero" data-station-for="hero">
         {
-          t.stats.map((s) => (
-            <div class="stats__item">
-              <dt>{s.label}</dt>
-              <dd>{s.value}</dd>
-            </div>
-          ))
+          site.available && (
+            <p class="pill hero__pill">
+              <span class="pill__dot" aria-hidden="true" />
+              {t.available}
+            </p>
+          )
         }
-      </dl>
-    </div>
-  </section>
-
-  <div class="marquee" aria-hidden="true">
-    <div class="marquee__track">
-      {[...stackList, ...stackList].map((s) => <span>{s}</span>)}
-    </div>
-  </div>
-
-  <section class="section" id="work">
-    <div class="wrap">
-      <header class="section__head" data-reveal>
-        <p class="eyebrow">{t.workEyebrow}</p>
-        <h2 class="section__title">{t.workTitle}</h2>
-      </header>
-      <div class="pcards">
-        {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
-      </div>
-    </div>
-  </section>
-
-  <section class="section section--alt" id="services">
-    <div class="wrap">
-      <header class="section__head" data-reveal>
-        <p class="eyebrow">{t.servicesEyebrow}</p>
-        <h2 class="section__title">{t.servicesTitle}</h2>
-      </header>
-      <ol class="services">
-        {
-          t.services.map((s, i) => (
-            <li class="service" data-reveal data-glow style={`--d:${i * 70}ms`}>
-              <span class="service__num">{String(i + 1).padStart(2, '0')}</span>
-              <h3>{s.title}</h3>
-              <p>{s.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
-
-  <section class="section" id="about">
-    <div class="wrap about">
-      <div data-reveal>
-        <p class="eyebrow">{t.aboutEyebrow}</p>
-        <h2 class="section__title">{t.aboutTitle}</h2>
-        {t.about.map((p) => <p class="about__p">{p}</p>)}
-      </div>
-      <aside class="about__side" data-reveal>
-        <h3 class="about__h">{t.credentialsTitle}</h3>
-        <ul class="creds">
+        <p class="eyebrow hero__role">{t.role}</p>
+        <h1 class="hero__title">
+          {t.heroA} <em>{t.heroEm}</em> {t.heroB}
+        </h1>
+        <p class="hero__lead">{t.heroLead}</p>
+        <p class="hero__cta">
+          <a class="btn btn--primary" href="#work">{t.ctaWork}</a>
+          <a class="btn" href="#contact">{t.ctaContact}</a>
+        </p>
+        <Image class="hero__fig" src={hello} alt="" width={420} loading="eager" />
+        <dl class="stats">
           {
-            t.credentials.map((c) => (
-              <li>
-                <strong>{c.name}</strong>
-                <span>{c.detail}</span>
+            t.stats.map((s) => (
+              <div class="stats__item">
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </section>
+
+      <section class="section" id="work" data-station-for="work">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">{t.workEyebrow}</p>
+          <h2 class="section__title">{t.workTitle}</h2>
+        </header>
+        <div class="pcards">
+          {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
+        </div>
+      </section>
+
+      <section class="section" id="services" data-station-for="services">
+        <header class="section__head" data-reveal>
+          <p class="eyebrow">{t.servicesEyebrow}</p>
+          <h2 class="section__title">{t.servicesTitle}</h2>
+        </header>
+        <ol class="services">
+          {
+            t.services.map((s, i) => (
+              <li class="service" data-reveal style={`--d:${i * 60}ms`}>
+                <span class="service__num">{i + 1}</span>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
               </li>
             ))
           }
-        </ul>
-        <h3 class="about__h">{t.stackTitle}</h3>
-        <ul class="chips">
-          {stackList.map((s) => <li>{s}</li>)}
-        </ul>
-      </aside>
-    </div>
-  </section>
+        </ol>
+        <div class="review" data-reveal>
+          <p class="review__title">{t.reviewTitle}</p>
+          <ul class="review__list">
+            <li class="check">
+              <span class="check__mark" aria-hidden="true">✓</span>
+              <span>{t.reviewChecks[0]}</span>
+              <span class="check__state">{t.reviewOk}</span>
+            </li>
+            <li class="check check--bad" data-review-bad>
+              <span class="check__mark" aria-hidden="true">
+                <span class="when-found">!</span><span class="when-fixed">✓</span>
+              </span>
+              <span>
+                <span class="when-found">{t.reviewBad}</span>
+                <span class="when-fixed">{t.reviewBadFixed}</span>
+              </span>
+              <span class="check__state">
+                <span class="when-found">{t.reviewFound}</span>
+                <span class="when-fixed">{t.reviewFixed}</span>
+              </span>
+            </li>
+            <li class="check">
+              <span class="check__mark" aria-hidden="true">✓</span>
+              <span>{t.reviewChecks[1]}</span>
+              <span class="check__state">{t.reviewOk}</span>
+            </li>
+          </ul>
+        </div>
+      </section>
 
-  <section class="section contact" id="contact">
-    <div class="wrap contact__in" data-reveal>
-      <p class="eyebrow">{t.contactEyebrow}</p>
-      <h2 class="contact__title">{t.contactTitle}</h2>
-      <p class="contact__lead">{t.contactLead}</p>
-      <p class="hero__cta">
-        <a class="btn btn--primary" href={site.linkedin} rel="noopener">{t.contactLinkedin}</a>
-        {site.email && <a class="btn" href={`mailto:${site.email}`}>{t.contactEmail}</a>}
-        <a class="btn" href={site.github} rel="noopener">{t.contactGithub}</a>
-      </p>
+      <section class="section" id="about" data-station-for="about">
+        <div data-reveal>
+          <p class="eyebrow">{t.aboutEyebrow}</p>
+          <h2 class="section__title">{t.aboutTitle}</h2>
+          {t.about.map((p) => <p class="about__p">{p}</p>)}
+        </div>
+        <div class="about__side" data-reveal>
+          <h3 class="about__h">{t.credentialsTitle}</h3>
+          <ul class="creds">
+            {
+              t.credentials.map((c) => (
+                <li>
+                  <strong>{c.name}</strong>
+                  <span>{c.detail}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <h3 class="about__h">{t.stackTitle}</h3>
+          <ul class="chips">
+            {stackList.map((s) => <li>{s}</li>)}
+          </ul>
+        </div>
+      </section>
+
+      <section class="section contact" id="contact" data-station-for="contact">
+        <p class="eyebrow">{t.contactEyebrow}</p>
+        <h2 class="contact__title">{t.contactTitle}</h2>
+        <p class="contact__lead">{t.contactLead}</p>
+        {
+          showForm ? (
+            <>
+              <ContactForm lang={lang} />
+              <p class="contact__alt">
+                {t.contactAlt}
+                <a class="link-arrow" href={site.linkedin} rel="noopener">LinkedIn</a>
+                <a class="link-arrow" href={site.github} rel="noopener">GitHub</a>
+              </p>
+            </>
+          ) : (
+            <p class="hero__cta">
+              <a class="btn btn--primary" href={site.linkedin} rel="noopener">{t.contactLinkedin}</a>
+              <a class="btn" href={site.github} rel="noopener">{t.contactGithub}</a>
+            </p>
+          )
+        }
+      </section>
     </div>
-  </section>
+
+    <Scene lang={lang} />
+  </div>
 </Base>
+
+<script>
+  // El hallazgo de la revisión de ejemplo se arregla cuando queda a la vista.
+  function init() {
+    const bad = document.querySelector<HTMLElement>('[data-review-bad]');
+    if (!bad) return;
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      bad.classList.add('is-fixed');
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          io.disconnect();
+          setTimeout(() => bad.classList.add('is-fixed'), 2200);
+        }
+      },
+      { threshold: 0.9 },
+    );
+    io.observe(bad);
+  }
+  document.addEventListener('astro:page-load', init);
+</script>

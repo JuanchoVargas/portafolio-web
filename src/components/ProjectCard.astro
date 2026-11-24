@@ -15,7 +15,7 @@ const href = projectPath(lang, slugOf(project));
 const number = String(index + 1).padStart(2, '0');
 ---
 
-<article class="pcard" data-reveal data-glow>
+<article class="pcard" data-reveal data-project-title={d.title}>
   <div class="pcard__text">
     <p class="pcard__meta">
       <span class="pcard__num">{number}</span>

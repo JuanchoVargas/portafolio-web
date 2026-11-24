@@ -1,0 +1,198 @@
+---
+// El personaje. Tiene una pose por estación de la portada y cambia según la
+// sección que el visitante esté leyendo. Es decorativo: todo el contenido vive
+// en la columna de texto.
+import { Image } from 'astro:assets';
+import { ui, type Lang } from '../i18n/ui';
+import hello from '../assets/personaje/01-saludo.png';
+import laptop from '../assets/personaje/03-portatil.png';
+import arms from '../assets/personaje/04-brazos-cruzados.png';
+import lens from '../assets/personaje/05-lupa.png';
+import walk from '../assets/personaje/07-caminando.png';
+import desk from '../assets/personaje/08-sentado.png';
+import paper from '../assets/personaje/09-entregando.png';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const say = ui[lang].say;
+---
+
+<aside
+  class="stage"
+  aria-hidden="true"
+  data-stage
+  data-station="hero"
+  data-pose="hello"
+  data-say={JSON.stringify(say)}
+>
+  <p class="bubble is-idle" data-bubble>{say.hero}</p>
+  <div class="stage__window" data-stage-window>
+    <div class="stage__figs">
+      <div class="fig fig--hello">
+        <Image src={hello} alt="" width={520} loading="eager" />
+      </div>
+      <div class="fig fig--walk">
+        <Image src={walk} alt="" width={520} />
+      </div>
+      <div class="fig fig--desk">
+        <div class="fig__fill fig__fill--screen"></div>
+        <Image src={desk} alt="" width={1040} />
+      </div>
+      <div class="fig fig--laptop">
+        <Image src={laptop} alt="" width={520} />
+      </div>
+      <div class="fig fig--lens">
+        <Image src={lens} alt="" width={520} />
+      </div>
+      <div class="fig fig--arms">
+        <Image src={arms} alt="" width={520} />
+      </div>
+      <div class="fig fig--paper">
+        <div class="fig__fill fig__fill--paper"></div>
+        <Image src={paper} alt="" width={520} />
+      </div>
+    </div>
+  </div>
+</aside>
+
+<script>
+  type Say = {
+    hero: string;
+    work: string;
+    project: string;
+    services: string;
+    about: string;
+    contact: string;
+    click: string[];
+  };
+
+  const POSES: Record<string, string> = {
+    hero: 'hello',
+    work: 'desk',
+    services: 'lens',
+    about: 'arms',
+    contact: 'paper',
+  };
+
+  let stop: AbortController | undefined;
+
+  function init() {
+    stop?.abort();
+    const stage = document.querySelector<HTMLElement>('[data-stage]');
+    if (!stage) return;
+    stop = new AbortController();
+    const { signal } = stop;
+
+    const bubble = stage.querySelector<HTMLElement>('[data-bubble]')!;
+    const figs = stage.querySelector<HTMLElement>('.stage__figs')!;
+    const say: Say = JSON.parse(stage.dataset.say!);
+    const sections = [...document.querySelectorAll<HTMLElement>('[data-station-for]')];
+    const cards = [...document.querySelectorAll<HTMLElement>('[data-project-title]')];
+    const wide = matchMedia('(min-width: 1000px)');
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+
+    let station = 'hero';
+    let phrase = say.hero;
+    let lastY = window.scrollY;
+    let walkTimer = 0;
+    let swapTimer = 0;
+    let idleTimer = 0;
+    let clicks = 0;
+    let queued = false;
+
+    function speak(text: string) {
+      if (text === phrase) return;
+      phrase = text;
+      clearTimeout(swapTimer);
+      clearTimeout(idleTimer);
+      bubble.classList.remove('is-idle');
+      bubble.classList.add('is-swap');
+      swapTimer = window.setTimeout(() => {
+        bubble.textContent = text;
+        bubble.classList.remove('is-swap');
+      }, 200);
+      // En pantallas angostas el globo se guarda solo para no tapar el texto.
+      idleTimer = window.setTimeout(() => bubble.classList.add('is-idle'), 4200);
+    }
+
+    function lineAt(list: HTMLElement[], y: number) {
+      let found: HTMLElement | undefined;
+      for (const el of list) {
+        if (el.getBoundingClientRect().top <= y) found = el;
+      }
+      return found;
+    }
+
+    function update() {
+      queued = false;
+      const y = window.innerHeight * 0.5;
+      // Al fondo de la página manda la última sección, aunque sea corta.
+      const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+      const current =
+        (atEnd ? sections[sections.length - 1] : lineAt(sections, y))?.dataset.stationFor ?? 'hero';
+      const down = window.scrollY >= lastY;
+      lastY = window.scrollY;
+
+      if (current !== station) {
+        station = current;
+        stage.dataset.station = current;
+        clearTimeout(walkTimer);
+        if (wide.matches && !still.matches) {
+          // Entre una estación y la siguiente, da un par de pasos.
+          stage.style.setProperty('--dir', down ? '1' : '-1');
+          stage.dataset.pose = 'walk';
+          walkTimer = window.setTimeout(() => {
+            stage.dataset.pose = POSES[current];
+          }, 460);
+        } else {
+          stage.dataset.pose = POSES[current];
+        }
+      }
+
+      if (station === 'work') {
+        const title = lineAt(cards, y)?.dataset.projectTitle;
+        speak(title ? say.project.replace('{title}', () => title) : say.work);
+      } else {
+        speak(say[station as 'hero' | 'services' | 'about' | 'contact']);
+      }
+    }
+
+    function request() {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    }
+
+    window.addEventListener('scroll', request, { passive: true, signal });
+    window.addEventListener('resize', request, { signal });
+
+    // Se inclina un poco hacia el puntero.
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        if (still.matches || !wide.matches || e.pointerType !== 'mouse') return;
+        const r = stage.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+        figs.style.setProperty('--lean', Math.max(-1, Math.min(1, dx * 2)).toFixed(3));
+      },
+      { passive: true, signal },
+    );
+
+    stage.querySelector('[data-stage-window]')!.addEventListener(
+      'click',
+      () => {
+        speak(say.click[clicks % say.click.length]);
+        clicks += 1;
+      },
+      { signal },
+    );
+
+    update();
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => stop?.abort());
+</script>

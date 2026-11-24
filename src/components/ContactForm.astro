@@ -1,0 +1,91 @@
+---
+// La hoja que entrega el personaje. Envía a `site.formEndpoint`; sin JavaScript
+// el navegador hace el envío normal del formulario.
+import { ui, type Lang } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = ui[lang];
+// Los datos del visitante solo viajan cifrados.
+if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
+  throw new Error('site.formEndpoint debe empezar por https://');
+}
+---
+
+<form
+  class="sheet"
+  method="post"
+  action={site.formEndpoint || undefined}
+  data-contact-form
+  data-reveal
+  data-ok={t.formOk}
+  data-error={t.formError}
+  data-offline={t.formOffline}
+  data-sending={t.formSending}
+>
+  <p class="field">
+    <label for="cf-name">{t.formName}</label>
+    <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required />
+  </p>
+  <p class="field">
+    <label for="cf-email">{t.formEmail}</label>
+    <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="160" required />
+  </p>
+  <p class="field">
+    <label for="cf-message">{t.formMessage}</label>
+    <textarea id="cf-message" name="message" maxlength="4000" required></textarea>
+  </p>
+  <p class="field field--trap" aria-hidden="true">
+    <label for="cf-check">Leave this field empty</label>
+    <input id="cf-check" name="leave_empty" type="text" tabindex="-1" autocomplete="off" />
+  </p>
+  <button class="btn btn--primary" type="submit">{t.formSend}</button>
+  <p class="sheet__note" data-form-note role="status">{t.formNote}</p>
+</form>
+
+<script>
+  function init() {
+    const form = document.querySelector<HTMLFormElement>('[data-contact-form]');
+    if (!form || form.dataset.ready) return;
+    form.dataset.ready = '1';
+    const note = form.querySelector<HTMLElement>('[data-form-note]')!;
+    const button = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+
+    const tell = (state: string, text: string | undefined) => {
+      note.dataset.state = state;
+      note.textContent = text ?? '';
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const endpoint = form.getAttribute('action');
+      if (!endpoint) {
+        tell('error', form.dataset.offline);
+        return;
+      }
+      // El campo trampa viaja con el resto: lo descarta quien recibe.
+      const data = new FormData(form);
+      button.disabled = true;
+      tell('', form.dataset.sending);
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          body: data,
+          signal: AbortSignal.timeout(15000),
+        });
+        if (!res.ok) throw new Error(String(res.status));
+        tell('ok', form.dataset.ok);
+        form.reset();
+      } catch {
+        tell('error', form.dataset.error);
+      } finally {
+        button.disabled = false;
+      }
+    });
+  }
+  document.addEventListener('astro:page-load', init);
+</script>
