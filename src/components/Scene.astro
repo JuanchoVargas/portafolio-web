@@ -208,8 +208,9 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
 
       if (pinned.matches) {
         const i = Math.min(sheets.length - 1, Math.max(0, Math.floor((pinTop - top) / span())));
-        if (i !== step) show(i, step >= 0);
-        if (top - pinTop < window.innerHeight / 2) current = sheets[i];
+        // Durante un viaje hacia una hoja no se muestran las que quedan de paso.
+        if (i !== step && !traveling) show(i, step >= 0);
+        if (top - pinTop < window.innerHeight / 2) current = sheets[traveling ? step : i];
       } else {
         sheets.forEach((sheet, n) => {
           const y = sheet.getBoundingClientRect().top;
@@ -255,11 +256,34 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
     // ---- Anclas ----
     // En la escena fija una hoja no tiene posición propia: se llega a ella
     // con el scroll que le corresponde.
-    function jump(hash: string, focus: boolean) {
+    // Desde fuera de la escena (la portada o el pie) la página viaja hasta ella
+    // con la hoja de destino ya puesta, en vez de saltar de golpe.
+    let traveling = false;
+    let travelTimer = 0;
+    function land() {
+      clearTimeout(travelTimer);
+      traveling = false;
+      request();
+    }
+
+    function jump(hash: string, focus: boolean, travel = true) {
       const i = sheets.findIndex((sheet) => `#${sheet.id}` === hash);
       if (i < 0 || !pinned.matches) return false;
-      const start = scene.getBoundingClientRect().top + window.scrollY - pinTop;
-      window.scrollTo({ top: start + (i + 0.3) * span(), behavior: 'instant' });
+      const box = scene.getBoundingClientRect();
+      const start = box.top + window.scrollY - pinTop;
+      const top = start + (i + 0.3) * span();
+      const inside = box.top - pinTop < 1 && box.bottom >= window.innerHeight;
+      if (travel && !inside) {
+        show(i, false);
+        traveling = true;
+        clearTimeout(travelTimer);
+        // Respaldo por si el navegador no avisa el fin del scroll.
+        travelTimer = window.setTimeout(land, 1600);
+        window.scrollTo({ top, behavior: 'smooth' });
+        if (focus) sheets[i].focus({ preventScroll: true });
+        return true;
+      }
+      window.scrollTo({ top, behavior: 'instant' });
       if (i !== step) show(i, step >= 0);
       if (focus) sheets[i].focus({ preventScroll: true });
       return true;
@@ -288,17 +312,28 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
       { signal },
     );
 
+    window.addEventListener('scrollend', () => traveling && land(), { signal });
+    // Si el visitante toma el control a mitad del viaje, manda su scroll.
+    for (const type of ['wheel', 'touchstart', 'keydown'] as const) {
+      window.addEventListener(type, () => traveling && land(), { passive: true, signal });
+    }
     window.addEventListener('scroll', request, { passive: true, signal });
     window.addEventListener('resize', request, { signal });
     pinned.addEventListener('change', sync, { signal });
     still.addEventListener('change', request, { signal });
-    signal.addEventListener('abort', () => clearTimeout(walkTimer));
+    signal.addEventListener('abort', () => {
+      clearTimeout(walkTimer);
+      clearTimeout(travelTimer);
+    });
 
     // La escena quedó lista: se confirma la marca que pone la cabecera del documento.
     document.documentElement.dataset.scene = 'ready';
+    // Si la escena llegó tarde y la cabecera ya había vuelto al flujo normal,
+    // se recupera la escena fija con sus transiciones.
+    document.documentElement.classList.add('js');
     hero?.classList.add('is-on');
     sync();
-    if (location.hash) requestAnimationFrame(() => jump(location.hash, false));
+    if (location.hash) requestAnimationFrame(() => jump(location.hash, false, false));
   }
 
   document.addEventListener('astro:page-load', init);
