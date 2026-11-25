@@ -1,0 +1,249 @@
+/* ---------- Demo de cotización ----------
+   A la izquierda se arma; a la derecha está el documento como lo recibe el
+   cliente: una hoja clara dentro del marco. El marco es el de demos.css. */
+.quote__body {
+  display: grid;
+}
+.quote__build {
+  padding: 10px 14px 12px;
+}
+.quote__head {
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+.quote__items li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14px;
+}
+.quote__name {
+  min-width: 0;
+}
+
+/* Cantidad: menos, cifra, más. */
+.quote__step {
+  display: flex;
+  flex: none;
+  align-items: center;
+  border: var(--hair);
+}
+.quote__step button {
+  width: 26px;
+  height: 24px;
+  border: 0;
+  background: none;
+  font: 600 14px/1 var(--mono);
+  cursor: pointer;
+}
+.quote__step button:hover:not(:disabled) {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.quote__step button:focus-visible {
+  outline-offset: -2px;
+}
+.quote__step output {
+  min-width: 26px;
+  font: 600 13px/24px var(--mono);
+  text-align: center;
+}
+.quote :is(button):disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.quote .chip[aria-pressed='true']:disabled {
+  opacity: 0.8;
+}
+.quote__discount {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* El documento: papel claro, sin importar el tema. Redefine los valores que
+   usa para que la tinta sea oscura dentro de la hoja. */
+.quote__doc {
+  --ink: #15130f;
+  --muted: #5d574b;
+  --rule: rgba(21, 19, 15, 0.15);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 12px 14px;
+  padding: 12px 14px;
+  overflow: hidden;
+  background: #fffdf7;
+  box-shadow: 4px 4px 0 var(--faint);
+  color: var(--ink);
+  color-scheme: light;
+  font-size: 12.5px;
+  line-height: 1.35;
+}
+.quote__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--ink);
+}
+.quote__company {
+  font: var(--display-weight) 17px/1 var(--display);
+  font-stretch: var(--display-stretch);
+  text-transform: uppercase;
+}
+.quote__for {
+  margin-top: 4px;
+  color: var(--muted);
+}
+.quote__for b {
+  color: var(--ink);
+}
+.quote__number {
+  display: grid;
+  flex: none;
+  gap: 2px;
+  font: 500 10px/1.2 var(--mono);
+  letter-spacing: 0.08em;
+  text-align: right;
+  text-transform: uppercase;
+}
+.quote__number b {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+.quote__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.quote__table th {
+  padding: 6px 0 3px;
+  color: var(--muted);
+  font: 600 9.5px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.quote__table td {
+  padding: 3px 0;
+  border-top: 1px solid var(--rule);
+}
+.quote__table .num {
+  padding-left: 10px;
+  font-family: var(--mono);
+  text-align: right;
+  white-space: nowrap;
+}
+.quote__table th.num {
+  font-family: var(--mono);
+}
+.quote__table td.quote__empty {
+  padding: 14px 0;
+  color: var(--muted);
+  text-align: center;
+}
+.quote__sums {
+  display: grid;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: 8px;
+  font-family: var(--mono);
+}
+.quote__sums div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.quote__sums dd {
+  min-width: 96px;
+  text-align: right;
+}
+.quote__grand {
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.quote__grand dd {
+  box-shadow: inset 0 -0.55em 0 var(--spot);
+}
+
+/* El sello que cae sobre la hoja al enviarla o aprobarla. */
+.quote__seal {
+  position: absolute;
+  left: 14px;
+  bottom: 12px;
+  padding: 4px 10px;
+  border: 3px double currentColor;
+  color: #2a4a86;
+  font: 600 12px/1.15 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  rotate: -6deg;
+}
+.quote__doc[data-state='approved'] .quote__seal {
+  color: #2f6b12;
+}
+
+/* Pie: los pasos, lo que pasó y el botón del paso siguiente. */
+.quote__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: var(--line);
+}
+.quote__steps {
+  display: flex;
+  gap: 4px;
+  font: 600 10px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.quote__steps li {
+  padding: 3px 8px;
+  border: var(--hair);
+  border-color: var(--faint);
+  color: var(--muted);
+}
+.quote__steps li[data-done='true'] {
+  border-color: var(--spot);
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.quote__status {
+  flex: 1 1 200px;
+  color: var(--muted);
+  font: 500 12px/1.35 var(--mono);
+}
+.quote__status span {
+  display: block;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .quote__seal {
+    animation: quote-seal 0.3s var(--ease) both;
+  }
+}
+@keyframes quote-seal {
+  from {
+    opacity: 0;
+    scale: 1.6;
+  }
+}
+
+@media (min-width: 720px) {
+  .quote__body {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  }
+  .quote__doc {
+    min-height: 226px;
+    margin-left: 0;
+  }
+}

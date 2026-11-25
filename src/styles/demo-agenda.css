@@ -1,0 +1,184 @@
+/* ---------- Demo de agenda ----------
+   A la izquierda el día por profesional; a la derecha los insumos. Va dentro
+   del marco `.demo` de demos.css. */
+.agenda {
+  display: grid;
+}
+.agenda__reset {
+  margin-left: auto;
+}
+/* En pantallas angostas la agenda se desliza por su cuenta. */
+.agenda__scroll {
+  overflow-x: auto;
+}
+.agenda__day {
+  display: grid;
+  grid-template-columns: 50px repeat(2, minmax(130px, 1fr));
+  grid-template-rows: 24px repeat(var(--slots), 25px);
+  gap: 2px;
+  min-width: 330px;
+  padding: 8px 12px 10px;
+}
+.agenda__head {
+  grid-row: 1;
+  align-self: center;
+  color: var(--muted);
+  font: 600 11px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.agenda__time {
+  grid-column: 1;
+  align-self: center;
+  color: var(--muted);
+  font: 500 11px/1 var(--mono);
+}
+/* Franja libre: un botón discreto que se marca al pasar. */
+.agenda__slot {
+  border: 1px dashed var(--faint);
+  border-radius: var(--radius);
+  background: none;
+  color: transparent;
+  font: 500 10px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    border-color 0.3s;
+}
+.agenda__slot:hover,
+.agenda__slot:focus-visible {
+  border-color: var(--spot);
+  background: var(--spot-soft);
+  color: var(--spot-text);
+}
+/* El rechazo destella en el color de alerta. */
+.agenda__slot.is-no {
+  border-color: var(--alert);
+  background: var(--alert);
+  color: var(--alert-ink);
+}
+/* Cita: ocupa tantas franjas como dura. */
+.agenda__appt {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-content: start;
+  align-items: baseline;
+  min-width: 0;
+  padding: 5px 8px;
+  overflow: hidden;
+  border: var(--hair);
+  border-left: 4px solid var(--spot);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font: 500 11px/1.25 var(--mono);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.agenda__appt b {
+  font-weight: 600;
+  white-space: nowrap;
+}
+.agenda__appt span {
+  color: var(--muted);
+  white-space: nowrap;
+}
+.agenda__appt:hover {
+  background: var(--spot-soft);
+}
+.agenda__appt.is-flash {
+  background: var(--spot-flash);
+}
+.agenda__appt[data-done='true'] {
+  border-left-color: var(--faint);
+  border-style: dashed;
+  border-left-style: solid;
+  color: var(--muted);
+}
+.agenda__slot:focus-visible,
+.agenda__appt:focus-visible {
+  outline-offset: -3px;
+}
+
+/* Insumos: existencia, barra y mínimo. */
+.agenda__stock {
+  padding: 10px 14px 12px;
+  border-top: var(--line);
+  background: var(--paper);
+}
+.agenda__title {
+  margin-bottom: 6px;
+  color: var(--muted);
+}
+.agenda__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 10px;
+  align-items: baseline;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.agenda__item:last-child {
+  border-bottom: 0;
+}
+.agenda__qty {
+  font: 600 14px/1 var(--mono);
+}
+.agenda__bar {
+  height: 6px;
+  align-self: center;
+  border: var(--hair);
+}
+.agenda__bar i {
+  display: block;
+  height: 100%;
+  background: var(--spot);
+  transition: width 0.4s var(--ease);
+}
+.agenda__min {
+  color: var(--muted);
+  font: 500 10px/1.3 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.agenda__item[data-low='true'] .agenda__bar i {
+  background: var(--alert);
+}
+.agenda__item[data-low='true'] .agenda__min {
+  padding: 1px 6px;
+  background: var(--alert);
+  color: var(--alert-ink);
+}
+.agenda__result {
+  min-height: 52px;
+}
+.agenda__idle {
+  color: var(--muted);
+}
+.agenda__warn {
+  color: var(--alert);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agenda__slot,
+  .agenda__appt,
+  .agenda__bar i {
+    transition: none;
+  }
+}
+@media (min-width: 720px) {
+  .agenda {
+    grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+  }
+  .agenda__stock {
+    border-top: 0;
+    border-left: var(--line);
+  }
+}

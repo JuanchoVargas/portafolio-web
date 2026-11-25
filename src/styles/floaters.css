@@ -39,14 +39,15 @@
   will-change: translate;
   transition:
     background 0.2s,
-    box-shadow 0.2s;
+    box-shadow 0.2s,
+    scale 0.2s var(--ease);
 }
 .floater:nth-child(odd) {
   border-radius: 50%;
 }
 .floater svg {
-  width: 52%;
-  height: 52%;
+  width: 56%;
+  height: 56%;
   fill: currentColor;
 }
 /* Ficha de texto: tan ancha como su rótulo. */
@@ -59,11 +60,21 @@
   border-radius: var(--radius);
   white-space: nowrap;
 }
+/* Una tecnología: ficha clara con el logo en su color de marca. La ficha no
+   cambia con el tema para que el color se lea igual en claro y en oscuro. */
+.floater--brand {
+  border-color: var(--brand);
+  background: #fffdf7;
+  color: var(--brand);
+}
 .floater:hover {
   z-index: 1;
+  scale: 1.12;
+  box-shadow: var(--shadow);
+}
+.floater:not(.floater--brand):hover {
   background: var(--spot);
   color: var(--spot-ink);
-  box-shadow: var(--shadow);
 }
 /* El nombre aparece al pasar por encima. */
 .floater__label {

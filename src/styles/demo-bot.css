@@ -1,0 +1,261 @@
+/* ---------- Demo del bot de ventas ----------
+   A la izquierda el chat, con el historial de alto fijo; a la derecha lo que
+   ve el equipo de la tienda. Va dentro del marco .demo (demos.css). */
+.bot {
+  display: grid;
+}
+.bot__chat {
+  display: grid;
+  min-width: 0;
+}
+
+/* Historial: alto fijo y scroll propio, para que la hoja no crezca. */
+.bot__log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 236px;
+  padding: 12px 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--paper);
+  scrollbar-width: thin;
+  scrollbar-color: var(--faint) transparent;
+}
+.bot__log:focus-visible {
+  outline-offset: -3px;
+}
+.bot__msg {
+  max-width: 86%;
+  padding: 7px 11px;
+  border: var(--hair);
+  border-radius: var(--radius-balloon);
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.bot__msg--bot {
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+  background: var(--sheet);
+}
+.bot__msg--user {
+  align-self: flex-end;
+  border-color: var(--spot);
+  border-bottom-right-radius: 2px;
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+/* Aviso del sistema: no lo dice nadie, va centrado y a lápiz. */
+.bot__msg--system {
+  align-self: center;
+  max-width: 100%;
+  padding: 3px 10px;
+  border: var(--pencil-line);
+  border-style: dashed;
+  border-radius: 999px;
+  color: var(--pencil);
+  font: 500 11px/1.4 var(--mono);
+  text-align: center;
+}
+.bot__msg--typing {
+  color: var(--muted);
+  font: 500 12px/1.4 var(--mono);
+}
+
+/* Ficha del producto y resumen de la selección, dentro del globo. */
+.bot__card {
+  display: grid;
+  gap: 3px;
+  margin-top: 7px;
+  padding: 7px 10px;
+  border: var(--hair);
+  border-radius: var(--radius);
+  background: var(--paper);
+  font-size: 12.5px;
+}
+.bot__card > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+}
+.bot__card dt {
+  color: var(--muted);
+}
+.bot__card dd {
+  text-align: right;
+}
+.bot__card-top dt {
+  color: var(--ink);
+  font-weight: 600;
+}
+.bot__card-out dd {
+  color: var(--alert);
+}
+.bot__card--order {
+  border-color: var(--spot);
+}
+.bot__num {
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+.bot__link {
+  color: var(--spot-text);
+  font: 500 11.5px/1.5 var(--mono);
+  overflow-wrap: anywhere;
+}
+.bot__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.bot__actions .chip {
+  padding: 3px 10px;
+  border-color: var(--spot-text);
+  color: var(--spot-text);
+}
+.bot__actions .chip:hover {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+
+/* Mensajes sugeridos: una sola fila que se desliza si no caben. */
+.bot__suggest {
+  display: flex;
+  gap: 6px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-top: var(--line);
+  scrollbar-width: none;
+}
+.bot__suggest .chip {
+  flex: none;
+  padding: 3px 10px;
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+.bot__form {
+  display: flex;
+  border-top: var(--hair);
+}
+.bot__input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--ink);
+  font-size: 14px;
+}
+.bot__input::placeholder {
+  color: var(--muted);
+}
+.bot__input:focus-visible {
+  outline-offset: -3px;
+}
+.bot__send {
+  padding: 0 18px;
+  border: 0;
+  border-left: var(--hair);
+  background: var(--spot);
+  color: var(--spot-ink);
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.bot__send:focus-visible {
+  outline-offset: -3px;
+}
+.bot__send:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+/* Lo que ve el equipo. */
+.bot__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px 14px;
+  border-top: var(--line);
+}
+.bot__head {
+  color: var(--muted);
+}
+.bot__status {
+  align-self: flex-start;
+  padding: 3px 10px;
+  border: var(--hair);
+  border-radius: 999px;
+  font: 600 11px/1.4 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.bot__status::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--spot);
+}
+.bot__status[data-human='true'] {
+  border-color: var(--spot);
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.bot__status[data-human='true']::before {
+  background: var(--spot-ink);
+}
+.bot__facts {
+  display: grid;
+  font-size: 13px;
+}
+.bot__facts > div {
+  display: grid;
+  gap: 1px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.bot__facts dt {
+  color: var(--muted);
+  font: 500 10px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.bot__panel-note {
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bot__msg {
+    animation: bot-in 0.22s var(--ease) both;
+  }
+  .bot__status {
+    transition:
+      background 0.3s,
+      color 0.3s;
+  }
+}
+@keyframes bot-in {
+  from {
+    opacity: 0;
+    translate: 0 5px;
+  }
+}
+
+@media (min-width: 720px) {
+  .bot {
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  }
+  .bot__panel {
+    border-top: 0;
+    border-left: var(--line);
+  }
+}

@@ -2,17 +2,21 @@
 // La portada (hoja 01) y, después, la escena con el resto de las hojas.
 import Base from '../layouts/Base.astro';
 import ContactForm from './ContactForm.astro';
-import DemoGrid from './DemoGrid.vue';
+import DemoLab from './DemoLab.vue';
 import DemoRoles from './DemoRoles.vue';
 import Figure from './Figure.astro';
 import Floaters from './Floaters.astro';
 import ProjectCard from './ProjectCard.astro';
 import Scene from './Scene.astro';
 import Sheet from './Sheet.astro';
-import { ui, stackList, type Lang } from '../i18n/ui';
-import { getProjects } from '../lib/projects';
+import { ui, type Lang } from '../i18n/ui';
+import { demoAgenda } from '../i18n/demo-agenda';
+import { demoBot } from '../i18n/demo-bot';
+import { demoQuote } from '../i18n/demo-quote';
+import { getProjects, projectPath } from '../lib/projects';
 import { sheetById, sheetTotal } from '../data/sheets';
 import { site } from '../data/site';
+import { stack, tech } from '../data/tech';
 
 interface Props {
   lang: Lang;
@@ -97,8 +101,16 @@ const work = sheetById('work');
     </Sheet>
 
     <Sheet id="demo" dark lang={lang} eyebrow={labels.demo} title={t.demoTitle}>
-      <DemoGrid client:visible t={t.demoGrid} lang={lang} stamp={t.fictional} />
-      <p class="note hand sheet__note">{t.noteGrid}</p>
+      <DemoLab
+        client:visible
+        label={t.demosLabel}
+        bot={demoBot[lang]}
+        agenda={demoAgenda[lang]}
+        quote={demoQuote[lang]}
+        pay={t.demoPay}
+        thousands={t.thousands}
+        stamp={t.fictional}
+      />
     </Sheet>
 
     <Sheet id="security" dark lang={lang} eyebrow={labels.security} title={t.securityTitle}>
@@ -118,6 +130,14 @@ const work = sheetById('work');
                 <div>
                   <h3>{s.title}</h3>
                   <p>{s.text}</p>
+                  <p class="list__more">
+                    <a class="link" href={s.to.startsWith('#') ? s.to : projectPath(lang, s.to)}>
+                      {s.proof}
+                    </a>
+                    <a class="chip chip--go" href="#contact" data-quote={s.quote}>
+                      {t.quoteCta}
+                    </a>
+                  </p>
                 </div>
               </li>
             ))
@@ -173,7 +193,22 @@ const work = sheetById('work');
           </ul>
           <h3 class="label">{t.stackTitle}</h3>
           <ul class="chips">
-            {stackList.map((s) => <li>{s}</li>)}
+            {
+              stack.map((id) => (
+                <li class="chips__tech" style={`--brand:#${tech[id].hex}`}>
+                  <span class="chips__logo" aria-hidden="true">
+                    {tech[id].icon ? (
+                      <svg viewBox="0 0 24 24">
+                        <path d={tech[id].icon} />
+                      </svg>
+                    ) : (
+                      tech[id].text
+                    )}
+                  </span>
+                  {tech[id].name}
+                </li>
+              ))
+            }
           </ul>
         </div>
       </div>
@@ -214,5 +249,15 @@ const work = sheetById('work');
     if (!bad) return;
     const wait = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 2200;
     setTimeout(() => bad.classList.add('is-fixed'), wait);
+  });
+
+  // "Cotizar" deja escrito el inicio del mensaje en el formulario, salvo que
+  // el visitante ya haya escrito el suyo.
+  let filled = '';
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest<HTMLElement>('[data-quote]');
+    const box = document.querySelector<HTMLTextAreaElement>('#cf-message');
+    if (!link || !box || (box.value && box.value !== filled)) return;
+    box.value = filled = link.dataset.quote ?? '';
   });
 </script>

@@ -18,7 +18,11 @@ const links = nodes.flatMap((n, a) => (n.links ?? []).map((b) => `${a}-${b}`));
   <svg class="floaters__lines"></svg>
   {
     nodes.map((n) => (
-      <span class:list={['floater', n.text && 'floater--chip']} data-floater style={`left:${n.x}%;top:${n.y}%`}>
+      <span
+        class:list={['floater', !n.icon && 'floater--chip', n.hex && 'floater--brand']}
+        data-floater
+        style={`left:${n.x}%;top:${n.y}%${n.hex ? `;--brand:#${n.hex}` : ''}`}
+      >
         {n.icon ? (
           <svg viewBox="0 0 24 24">
             <path d={n.icon} />

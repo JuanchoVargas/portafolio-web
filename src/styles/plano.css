@@ -275,6 +275,17 @@
   background: var(--ink);
   color: var(--paper);
 }
+/* Pastilla que lleva a pedir algo: va en el color de marca. */
+.chip--go {
+  border-color: var(--spot);
+  background: var(--spot);
+  color: var(--spot-ink);
+  font-weight: 600;
+}
+.chip--go:hover {
+  background: var(--sheet);
+  color: var(--spot-text);
+}
 
 /* Lista de etiquetas (tecnologías). */
 .chips {
@@ -288,6 +299,30 @@
   border-radius: 999px;
   background: var(--sheet);
   font: 500 12px/1.5 var(--mono);
+}
+/* Una tecnología: su logo en el color de marca, sobre una ficha clara que no
+   cambia con el tema. */
+.chips .chips__tech {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding: 3px 10px 3px 3px;
+}
+.chips__logo {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding-inline: 3px;
+  border-radius: 999px;
+  background: #fffdf7;
+  color: var(--brand);
+  font: 600 9px/1 var(--mono);
+}
+.chips__logo svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
 }
 
 /* Etiqueta rectangular. */
@@ -382,4 +417,14 @@
   color: var(--muted);
   font-size: 14px;
   line-height: 1.45;
+}
+/* La prueba de cada punto y el botón para pedirlo. */
+.list .list__more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  margin-top: 8px;
+  color: var(--ink);
+  font: 500 12px/1.3 var(--mono);
 }
