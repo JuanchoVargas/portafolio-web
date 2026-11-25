@@ -24,10 +24,13 @@
   --ink: #15130f; /* texto y bordes */
   --muted: #5d574b; /* texto secundario */
   --faint: #b9b2a2; /* marcas apagadas */
-  --spot: #e5432a; /* el único color de acento */
-  --spot-ink: #fffdf7; /* texto sobre el acento */
-  --spot-soft: rgba(229, 67, 42, 0.1); /* resaltado suave */
-  --spot-flash: rgba(229, 67, 42, 0.24); /* destello al pulsar */
+  --spot: #b8f35a; /* el color de marca: el lima de los tenis del personaje */
+  --spot-ink: #15130f; /* texto sobre el color de marca */
+  --spot-text: #2f6b12; /* el color de marca cuando va como texto o trazo fino sobre papel */
+  --spot-soft: rgba(184, 243, 90, 0.3); /* resaltado suave */
+  --spot-flash: rgba(184, 243, 90, 0.6); /* destello al pulsar */
+  --alert: #e5432a; /* solo para alertas: accesos denegados, hallazgos, errores */
+  --alert-ink: #fffdf7; /* texto sobre la alerta */
   --pencil: #2a4a86; /* cotas y notas a lápiz */
   --grid: rgba(38, 72, 128, 0.11); /* cuadrícula fina */
   --grid-strong: rgba(38, 72, 128, 0.2); /* cuadrícula mayor */
@@ -58,6 +61,12 @@
   --ease-walk: cubic-bezier(0.45, 0.05, 0.55, 0.95);
   --walk-ms: 1100ms; /* lo que tarda el personaje en cruzar la pantalla */
 
+  /* ---------- Nodos flotantes ---------- */
+  --float-size: 46px; /* lado de cada nodo */
+  --float-drift: 7; /* px que se mece cada nodo */
+  --float-reach: 170; /* px a los que el puntero empieza a atraerlo */
+  --float-pull: 22; /* px que llega a acercarse al puntero */
+
   /* ---------- Medidas generales ---------- */
   --z: 1; /* ampliación del contenido en monitores grandes (ver abajo) */
   --wrap-base: 1280px;
@@ -83,4 +92,27 @@
   :root {
     --z: 1.6;
   }
+}
+
+/* Superficie oscura, tipo terminal: las hojas con demos en vivo. Cambia los
+   mismos valores dentro de su bloque; el resto del CSS no se entera. */
+.dark {
+  --paper: #0e1116;
+  --sheet: #171b22;
+  --ink: #f2ede2;
+  --muted: #a6adb8;
+  --faint: #4a515c;
+  --spot-text: var(--spot);
+  --spot-soft: rgba(184, 243, 90, 0.16);
+  --pencil: #7fb0ff;
+  --grid: rgba(127, 176, 255, 0.08);
+  --grid-strong: rgba(127, 176, 255, 0.16);
+  --rule: rgba(242, 237, 226, 0.14);
+  --line: 2px solid var(--ink);
+  --hair: 1px solid var(--ink);
+  --pencil-line: 1.5px solid var(--pencil);
+  --shadow: 5px 5px 0 var(--spot);
+  --shadow-sm: 3px 3px 0 var(--spot);
+  --shadow-press: 2px 2px 0 var(--spot);
+  color: var(--ink);
 }

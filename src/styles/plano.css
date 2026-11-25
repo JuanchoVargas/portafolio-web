@@ -100,8 +100,8 @@
   display: inline-block;
   max-width: 17ch;
   padding: 8px 14px;
-  border: 3px double var(--spot);
-  color: var(--spot);
+  border: 3px double var(--spot-text);
+  color: var(--spot-text);
   font: 600 13px/1.15 var(--mono);
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -369,7 +369,7 @@
   border-bottom: 0;
 }
 .list__num {
-  color: var(--spot);
+  color: var(--spot-text);
   font: var(--display-weight) 30px/1 var(--display);
   font-stretch: var(--display-stretch);
 }

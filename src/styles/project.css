@@ -73,7 +73,7 @@
   color: var(--muted);
 }
 .link-back:hover {
-  color: var(--spot);
+  color: var(--spot-text);
 }
 .meta {
   display: flex;
@@ -250,5 +250,5 @@
   text-transform: uppercase;
 }
 .next:hover .next__title {
-  color: var(--spot);
+  color: var(--spot-text);
 }

@@ -22,7 +22,8 @@ body {
 /* El papel cuadriculado. La escena fija lo repite para que la cuadrícula no se
    mueva por debajo de las hojas. */
 body,
-.paper {
+.paper,
+.dark {
   background-color: var(--paper);
   background-image:
     linear-gradient(var(--grid-strong) 1px, transparent 1px),
@@ -133,7 +134,7 @@ textarea {
   text-transform: uppercase;
 }
 .eyebrow {
-  color: var(--spot);
+  color: var(--spot-text);
 }
 
 /* Letra a lápiz. */

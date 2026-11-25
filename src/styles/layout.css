@@ -79,5 +79,5 @@
   gap: 20px;
 }
 .site-footer a:hover {
-  color: var(--spot);
+  color: var(--spot-text);
 }

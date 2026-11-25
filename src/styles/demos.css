@@ -162,7 +162,7 @@
   border: var(--hair);
 }
 .demo__code[data-code='403'] {
-  border-color: var(--spot);
-  background: var(--spot);
-  color: var(--spot-ink);
+  border-color: var(--alert);
+  background: var(--alert);
+  color: var(--alert-ink);
 }

@@ -63,11 +63,21 @@
   font-size: 13px;
   line-height: 1.35;
 }
+/* El escenario del personaje: alrededor flotan los nodos. */
+.hero__stage {
+  position: relative;
+  display: grid;
+}
 .hero__fig {
   position: relative;
   justify-self: center;
+  align-self: end;
   height: min(52vh, 380px);
   margin-top: 64px;
+}
+/* Los nodos de cada hoja solo se ven en la escena fija. */
+.sheet__floaters {
+  display: none;
 }
 .hero__fig .balloon {
   position: absolute;
@@ -131,8 +141,8 @@
   padding: 0;
 }
 .legend__key--stamp {
-  border: 3px double var(--spot);
-  color: var(--spot);
+  border: 3px double var(--spot-text);
+  color: var(--spot-text);
   rotate: -5deg;
 }
 .legend__key--hand {
@@ -161,8 +171,10 @@
     margin: 0;
   }
   /* El personaje se para sobre la línea de la leyenda. */
+  .hero__stage {
+    align-self: stretch;
+  }
   .hero__fig {
-    align-self: end;
     height: min(64vh, calc(560px * var(--z)));
   }
   .hero__fig .balloon {
@@ -245,21 +257,30 @@
    un lado distinto en cada una. */
 @media (max-width: 999px) {
   .sheet__fig {
+    --bust: clamp(210px, 58vw, 300px); /* alto visible: de la cintura para arriba */
     position: relative;
     display: flex;
     align-items: center;
-    gap: 16px;
-    height: 176px;
+    gap: 4px;
+    height: var(--bust);
+    /* Sale del borde de la pantalla: se salta el margen de la hoja. */
+    margin-inline: calc(-1 * var(--gutter));
+    padding-right: var(--gutter);
     overflow: hidden;
     border-bottom: var(--pencil-line);
   }
   .sheet[data-side='right'] .sheet__fig {
     flex-direction: row-reverse;
+    padding-inline: var(--gutter) 0;
   }
+  /* La imagen trae aire a los lados: se recorta para pegarla al borde. */
   .sheet__fig .fig {
     align-self: flex-start;
-    height: 300px;
-    margin-inline: -14px;
+    height: calc(var(--bust) * 1.72);
+    margin-inline: calc(var(--bust) * -0.2) calc(var(--bust) * -0.12);
+  }
+  .sheet[data-side='right'] .sheet__fig .fig {
+    margin-inline: calc(var(--bust) * -0.12) calc(var(--bust) * -0.2);
   }
   .sheet__fig .balloon {
     margin-bottom: 26px;
@@ -269,24 +290,28 @@
     right: -10px;
     rotate: -45deg;
   }
+  /* El rótulo va sobre la figura si se cruzan: lleva su propio fondo. */
   .sheet__role {
     position: absolute;
-    right: 0;
+    right: var(--gutter);
     bottom: 8px;
+    z-index: 1;
     margin: 0;
+    padding: 2px 6px;
+    background: var(--paper);
   }
   .sheet[data-side='right'] .sheet__role {
     right: auto;
-    left: 0;
+    left: var(--gutter);
   }
   /* Sentado es más ancho: el globo va sobre la mesa. */
-  .sheet__fig .fig--desk {
-    height: 250px;
-    margin-inline: 0 -34px;
+  .sheet .sheet__fig .fig--desk {
+    height: calc(var(--bust) * 1.28);
+    margin-inline: 0 calc(var(--bust) * -0.16);
   }
   .sheet__fig:has(.fig--desk) .balloon {
     position: absolute;
-    left: 0;
+    left: var(--gutter);
     top: 10px;
     max-width: 15ch;
     margin: 0;
@@ -417,12 +442,12 @@
 }
 /* El hallazgo va en rojo hasta que se arregla. */
 .check--bad:not(.is-fixed) .check__mark {
-  border-color: var(--spot);
-  background: var(--spot);
-  color: var(--spot-ink);
+  border-color: var(--alert);
+  background: var(--alert);
+  color: var(--alert-ink);
 }
 .check--bad:not(.is-fixed) .check__state {
-  color: var(--spot);
+  color: var(--alert);
 }
 .check--bad .when-fixed,
 .check--bad.is-fixed .when-found {
@@ -537,7 +562,7 @@
   font-weight: 600;
 }
 .form__note[data-state='error'] {
-  color: var(--spot);
+  color: var(--alert);
   font-weight: 600;
 }
 
@@ -691,7 +716,18 @@
     display: none;
   }
   .js .sheet__in {
+    position: relative;
+    z-index: 1;
     zoom: var(--z);
+  }
+  /* Los nodos flotan en la franja del personaje, por detrás de él. */
+  .js .sheet__floaters {
+    display: block;
+    inset: 0 auto 0 0;
+    width: calc(var(--edge) + var(--actor-w) + 52px);
+  }
+  .js .sheet[data-side='right'] .sheet__floaters {
+    inset: 0 0 0 auto;
   }
   /* Con espacio a los lados, el sello de las demos sobresale del marco. */
   .js .demo__stamp {

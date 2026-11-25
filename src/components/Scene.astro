@@ -88,16 +88,17 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
     const sheetNow = document.querySelector<HTMLElement>('[data-sheet-now]');
 
     const pinned = matchMedia(PINNED);
-    const wide = matchMedia('(min-width: 1000px)');
     const still = matchMedia('(prefers-reduced-motion: reduce)');
     const walkMs = parseFloat(getComputedStyle(actor).getPropertyValue('--walk-ms')) || 1000;
 
     // ---- Clips ----
     // Cada pose tiene un clip en bucle que se descarga al llegar a ella.
-    // Safari no respeta la transparencia de este formato, así que ahí (y en
-    // pantallas angostas o con movimiento reducido) se queda la imagen fija.
+    // Safari no respeta la transparencia de este formato, así que ahí (y con
+    // movimiento reducido) se queda la imagen fija.
     const noAlpha = /^((?!chrome|chromium|android).)*safari/i.test(navigator.userAgent);
-    const canPlay = () => wide.matches && !still.matches && !noAlpha;
+    const canPlay = () => !still.matches && !noAlpha;
+    // Apiladas, cada hoja trae su propia figura: su clip corre solo a la vista.
+    const ownFigs = sheets.map((sheet) => sheet.querySelector<HTMLElement>('.sheet__fig [data-fig]'));
 
     for (const clip of document.querySelectorAll<HTMLVideoElement>('[data-fig] video')) {
       const fig = clip.parentElement!;
@@ -210,17 +211,19 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
         if (i !== step) show(i, step >= 0);
         if (top - pinTop < window.innerHeight / 2) current = sheets[i];
       } else {
-        for (const sheet of sheets) {
+        sheets.forEach((sheet, n) => {
           const y = sheet.getBoundingClientRect().top;
           if (y < window.innerHeight * 0.8 && !seen.has(sheet)) enter(sheet);
           if (y < window.innerHeight / 2) current = sheet;
-        }
+          const box = ownFigs[n]?.getBoundingClientRect();
+          setClip(ownFigs[n], canPlay() && !!box && box.bottom > 0 && box.top < window.innerHeight);
+        });
       }
 
       // El cajetín de la cabecera dice en qué hoja va la lectura.
       if (sheetNow && current) sheetNow.textContent = current.dataset.number!;
       // El saludo de la portada solo se mueve mientras está a la vista.
-      setClip(heroFig, canPlay() && top > pinTop);
+      setClip(heroFig, canPlay() && (pinned.matches ? top > pinTop : hero!.getBoundingClientRect().bottom > 0));
     }
 
     function request() {
@@ -237,6 +240,7 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
       seen.clear();
       if (pinned.matches) {
         pinTop = parseFloat(getComputedStyle(pin).top) || 0;
+        ownFigs.forEach((fig) => setClip(fig, false));
       } else {
         pinTop = 0;
         for (const sheet of sheets) {
@@ -287,7 +291,7 @@ const cast = t.cast[first.pose as keyof typeof t.cast];
     window.addEventListener('scroll', request, { passive: true, signal });
     window.addEventListener('resize', request, { signal });
     pinned.addEventListener('change', sync, { signal });
-    wide.addEventListener('change', request, { signal });
+    still.addEventListener('change', request, { signal });
     signal.addEventListener('abort', () => clearTimeout(walkTimer));
 
     // La escena quedó lista: se confirma la marca que pone la cabecera del documento.

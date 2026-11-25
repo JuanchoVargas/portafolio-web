@@ -16,15 +16,6 @@ const asset = poses[pose];
 ---
 
 <div class:list={['fig', `fig--${pose}`, extra]} data-fig={pose}>
-  {pose === 'desk' && <div class="fig__fill fig__fill--screen" />}
-  {
-    pose === 'paper' && (
-      <>
-        <div class="fig__fill fig__fill--paper" />
-        <div class="fig__fill fig__fill--paper-live" />
-      </>
-    )
-  }
   <Image src={asset.image} alt="" width={pose === 'desk' ? 1040 : 520} loading={eager ? 'eager' : 'lazy'} />
-  {clip && <video data-src={asset.clip} style={asset.box} muted loop playsinline preload="none" />}
+  {clip && 'clip' in asset && <video data-src={asset.clip} style={asset.box} muted loop playsinline preload="none" />}
 </div>

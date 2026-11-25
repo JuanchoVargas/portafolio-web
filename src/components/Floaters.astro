@@ -1,0 +1,216 @@
+---
+// Nodos que flotan en una zona y reaccionan al puntero: se dejan atraer, la
+// capa se desplaza un poco y las líneas que los unen se redibujan. Es
+// decorativo. La zona la define quien lo usa: el componente llena a su
+// contenedor posicionado.
+import { floatSets, type FloatSet } from '../data/floaters';
+
+interface Props {
+  set: FloatSet;
+  class?: string;
+}
+const { set, class: extra } = Astro.props;
+const nodes = floatSets[set];
+const links = nodes.flatMap((n, a) => (n.links ?? []).map((b) => `${a}-${b}`));
+---
+
+<div class:list={['floaters', extra]} data-floaters data-links={links.join(' ')} aria-hidden="true">
+  <svg class="floaters__lines"></svg>
+  {
+    nodes.map((n) => (
+      <span class:list={['floater', n.text && 'floater--chip']} data-floater style={`left:${n.x}%;top:${n.y}%`}>
+        {n.icon ? (
+          <svg viewBox="0 0 24 24">
+            <path d={n.icon} />
+          </svg>
+        ) : (
+          n.text
+        )}
+        <span class="floater__label">{n.label}</span>
+      </span>
+    ))
+  }
+</div>
+
+<script>
+  interface Node {
+    el: HTMLElement;
+    // Posición de reposo, desplazamiento actual y velocidad.
+    bx: number;
+    by: number;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    phase: number;
+    depth: number;
+  }
+  interface Layer {
+    el: HTMLElement;
+    nodes: Node[];
+    lines: { el: SVGLineElement; a: Node; b: Node }[];
+    inView: boolean;
+    drift: number;
+    reach: number;
+    pull: number;
+  }
+
+  const SVG = 'http://www.w3.org/2000/svg';
+  let stop: AbortController | undefined;
+
+  function init() {
+    stop?.abort();
+    const roots = [...document.querySelectorAll<HTMLElement>('[data-floaters]')];
+    if (!roots.length) return;
+    stop = new AbortController();
+    const { signal } = stop;
+
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    const num = (el: Element, name: string, fallback: number) =>
+      parseFloat(getComputedStyle(el).getPropertyValue(name)) || fallback;
+
+    const layers: Layer[] = roots.map((el) => {
+      const svg = el.querySelector('svg')!;
+      const nodes: Node[] = [...el.querySelectorAll<HTMLElement>('[data-floater]')].map((node, i) => ({
+        el: node,
+        bx: 0,
+        by: 0,
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        phase: i * 1.7,
+        depth: 0.6 + (i % 3) * 0.3,
+      }));
+      const lines = (el.dataset.links || '')
+        .split(' ')
+        .filter(Boolean)
+        .map((pair) => {
+          const [a, b] = pair.split('-').map(Number);
+          const line = document.createElementNS(SVG, 'line');
+          svg.append(line);
+          return { el: line, a: nodes[a], b: nodes[b] };
+        });
+      return { el, nodes, lines, inView: false, drift: 0, reach: 0, pull: 0 };
+    });
+
+    // Medidas que no cambian con el movimiento: se leen una vez por tamaño.
+    function measure(layer: Layer) {
+      // Los valores salen de tokens.css y crecen con la pantalla.
+      const z = num(layer.el, '--z', 1);
+      layer.drift = num(layer.el, '--float-drift', 7) * z;
+      layer.reach = num(layer.el, '--float-reach', 170) * z;
+      layer.pull = num(layer.el, '--float-pull', 22) * z;
+      for (const n of layer.nodes) {
+        n.bx = n.el.offsetLeft;
+        n.by = n.el.offsetTop;
+      }
+    }
+
+    function draw(layer: Layer) {
+      for (const n of layer.nodes) n.el.style.translate = `${n.x.toFixed(1)}px ${n.y.toFixed(1)}px`;
+      for (const { el, a, b } of layer.lines) {
+        el.setAttribute('x1', (a.bx + a.x).toFixed(1));
+        el.setAttribute('y1', (a.by + a.y).toFixed(1));
+        el.setAttribute('x2', (b.bx + b.x).toFixed(1));
+        el.setAttribute('y2', (b.by + b.y).toFixed(1));
+      }
+    }
+
+    // El puntero, en coordenadas de la ventana. Fuera de ella no atrae.
+    let px = -1e5;
+    let py = -1e5;
+    let frame = 0;
+    let tick = 0;
+
+    function step(now: number) {
+      frame = 0;
+      if (signal.aborted) return;
+      tick++;
+      const t = now / 1000;
+      let alive = false;
+      for (const layer of layers) {
+        if (!layer.inView) continue;
+        alive = true;
+        // Una hoja que no es la activa sigue en pantalla pero oculta.
+        if (layer.el.checkVisibility && !layer.el.checkVisibility({ visibilityProperty: true })) continue;
+        if (tick % 30 === 1) measure(layer);
+        const { drift, reach, pull } = layer;
+        const box = layer.el.getBoundingClientRect();
+        const lx = px - box.left;
+        const ly = py - box.top;
+        // Paralaje: toda la capa se corre un poco hacia el lado contrario al puntero.
+        const w = box.width;
+        const h = box.height;
+        const near = lx > -reach && lx < w + reach && ly > -reach && ly < h + reach;
+        const ox = near ? (w / 2 - lx) * 0.02 : 0;
+        const oy = near ? (h / 2 - ly) * 0.02 : 0;
+        for (const n of layer.nodes) {
+          let tx = Math.sin(t * 0.6 + n.phase) * drift + ox * n.depth;
+          let ty = Math.cos(t * 0.45 + n.phase * 1.3) * drift + oy * n.depth;
+          const dx = lx - n.bx;
+          const dy = ly - n.by;
+          const d = Math.hypot(dx, dy);
+          if (d < reach && d > 0.01) {
+            // Atracción: más fuerte a media distancia, suave al llegar.
+            const f = (1 - d / reach) * Math.min(pull, d);
+            tx += (dx / d) * f;
+            ty += (dy / d) * f;
+          }
+          n.vx = (n.vx + (tx - n.x) * 0.06) * 0.82;
+          n.vy = (n.vy + (ty - n.y) * 0.06) * 0.82;
+          n.x += n.vx;
+          n.y += n.vy;
+        }
+        draw(layer);
+      }
+      if (alive) frame = requestAnimationFrame(step);
+    }
+
+    const run = () => {
+      if (!frame && !still.matches && !signal.aborted) frame = requestAnimationFrame(step);
+    };
+
+    // Con movimiento reducido los nodos se quedan en su sitio, con sus líneas.
+    function rest() {
+      for (const layer of layers) {
+        measure(layer);
+        for (const n of layer.nodes) n.x = n.y = n.vx = n.vy = 0;
+        draw(layer);
+      }
+    }
+
+    const seen = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        const layer = layers.find((l) => l.el === entry.target)!;
+        layer.inView = entry.isIntersecting;
+        if (layer.inView) measure(layer);
+      }
+      run();
+    });
+    for (const layer of layers) seen.observe(layer.el);
+
+    window.addEventListener(
+      'pointermove',
+      (e) => {
+        if (e.pointerType === 'touch') return;
+        px = e.clientX;
+        py = e.clientY;
+      },
+      { passive: true, signal },
+    );
+    document.documentElement.addEventListener('pointerleave', () => (px = py = -1e5), { signal });
+    window.addEventListener('resize', rest, { signal });
+    still.addEventListener('change', () => (still.matches ? rest() : run()), { signal });
+    signal.addEventListener('abort', () => {
+      cancelAnimationFrame(frame);
+      seen.disconnect();
+    });
+
+    rest();
+    run();
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => stop?.abort());
+</script>

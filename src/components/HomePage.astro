@@ -5,6 +5,7 @@ import ContactForm from './ContactForm.astro';
 import DemoGrid from './DemoGrid.vue';
 import DemoRoles from './DemoRoles.vue';
 import Figure from './Figure.astro';
+import Floaters from './Floaters.astro';
 import ProjectCard from './ProjectCard.astro';
 import Scene from './Scene.astro';
 import Sheet from './Sheet.astro';
@@ -62,10 +63,13 @@ const work = sheetById('work');
         }
       </dl>
     </div>
-    <div class="hero__fig" aria-hidden="true">
-      <p class="balloon">{t.sayHero}</p>
-      <Figure pose="hello" clip eager />
-      <div class="dim-v"><span>{t.heroHeight}</span></div>
+    <div class="hero__stage">
+      <Floaters set="hero" />
+      <div class="hero__fig" aria-hidden="true">
+        <p class="balloon">{t.sayHero}</p>
+        <Figure pose="hello" clip eager />
+        <div class="dim-v"><span>{t.heroHeight}</span></div>
+      </div>
     </div>
     <aside class="legend" aria-label={t.legendTitle}>
       <p class="mono legend__title">{t.legendTitle}</p>
@@ -92,12 +96,12 @@ const work = sheetById('work');
       </div>
     </Sheet>
 
-    <Sheet id="demo" lang={lang} eyebrow={labels.demo} title={t.demoTitle}>
+    <Sheet id="demo" dark lang={lang} eyebrow={labels.demo} title={t.demoTitle}>
       <DemoGrid client:visible t={t.demoGrid} lang={lang} stamp={t.fictional} />
       <p class="note hand sheet__note">{t.noteGrid}</p>
     </Sheet>
 
-    <Sheet id="security" lang={lang} eyebrow={labels.security} title={t.securityTitle}>
+    <Sheet id="security" dark lang={lang} eyebrow={labels.security} title={t.securityTitle}>
       <DemoRoles client:visible t={t.demoRoles} stamp={t.fictional} />
       <p class="note hand sheet__note">{t.noteRoles}</p>
     </Sheet>
