@@ -5,35 +5,46 @@ import { site } from '../data/site';
 
 interface Props {
   lang: Lang;
+  // Lo que marca el cajetín: la hoja de esta página y el total.
+  sheetNow: string;
+  sheetTotal: string;
 }
-const { lang } = Astro.props;
+const { lang, sheetNow, sheetTotal } = Astro.props;
 const t = ui[lang];
 const home = homePath(lang);
 const other = switchLangPath(Astro.url.pathname, lang);
 ---
 
-<header class="site-header">
+<header class="site-header paper">
   <div class="wrap site-header__in">
-    <a class="brand" href={home} aria-label={site.name}>
-      <span class="brand__mark" aria-hidden="true">JD</span>
-      <span class="brand__name">{site.shortName}</span>
-    </a>
-    <nav class="nav" aria-label={t.navLabel}>
+    <a class="brand" href={home} aria-label={site.name}>{site.shortName}</a>
+    <nav class="nav mono" aria-label={t.navLabel}>
       <a href={`${home}#work`}>{t.navWork}</a>
       <a href={`${home}#services`}>{t.navServices}</a>
       <a href={`${home}#about`}>{t.navAbout}</a>
       <a href={`${home}#contact`}>{t.navContact}</a>
     </nav>
-    <div class="site-header__tools">
-      <a class="chip-link" href={other} hreflang={lang === 'en' ? 'es' : 'en'} aria-label={t.otherLangLabel}>
-        {t.otherLang}
-      </a>
-      <button class="icon-btn" type="button" data-theme-toggle aria-label={t.themeLabel}>
-        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-          <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"></circle>
-          <path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"></path>
-        </svg>
-      </button>
-    </div>
+    <a
+      class="chip site-header__lang"
+      href={other}
+      hreflang={lang === 'en' ? 'es' : 'en'}
+      aria-label={t.otherLangLabel}
+    >
+      {t.otherLang}
+    </a>
+    <dl class="titleblock">
+      <div>
+        <dt>{t.tbProject}</dt>
+        <dd>{t.tbName}</dd>
+      </div>
+      <div>
+        <dt>{t.tbSheet}</dt>
+        <dd><span data-sheet-now>{sheetNow}</span> / {sheetTotal}</dd>
+      </div>
+      <div>
+        <dt>{t.tbRev}</dt>
+        <dd>{new Date().getFullYear()}</dd>
+      </div>
+    </dl>
   </div>
 </header>

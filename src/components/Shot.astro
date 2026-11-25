@@ -1,5 +1,6 @@
 ---
-// Captura dentro de un marco de navegador. Sin imagen, dibuja una portada tipográfica.
+// Captura dentro de un marco de navegador. Sin imagen, dibuja una portada
+// tipográfica. Con `bar={false}` va sin la barra del navegador.
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 
@@ -9,23 +10,41 @@ interface Props {
   title: string;
   url?: string;
   eager?: boolean;
+  bar?: boolean;
+  sizes?: string;
 }
-const { image, alt, title, url, eager = false } = Astro.props;
+const {
+  image,
+  alt,
+  title,
+  url,
+  eager = false,
+  bar = true,
+  sizes = '(min-width: 960px) 56vw, 92vw',
+} = Astro.props;
 const host = url ? new URL(url).host.replace(/^www\./, '') : title.toLowerCase().replace(/\s+/g, '-');
 ---
 
 <figure class="shot">
-  <div class="shot__bar" aria-hidden="true">
-    <span class="shot__dots"><i></i><i></i><i></i></span>
-    <span class="shot__url">{host}</span>
-  </div>
+  {
+    bar && (
+      <div class="shot__bar" aria-hidden="true">
+        <span class="shot__dots">
+          <i />
+          <i />
+          <i />
+        </span>
+        <span class="shot__url">{host}</span>
+      </div>
+    )
+  }
   {
     image ? (
       <Image
         src={image}
         alt={alt}
         widths={[480, 800, 1200, 1600]}
-        sizes="(min-width: 960px) 56vw, 92vw"
+        sizes={sizes}
         loading={eager ? 'eager' : 'lazy'}
         class="shot__img"
       />

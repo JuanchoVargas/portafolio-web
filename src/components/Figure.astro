@@ -1,0 +1,30 @@
+---
+// Una pose del personaje: la imagen fija y, si se pide, su clip encima.
+// El clip no se descarga hasta que Scene.astro lo activa. Es decorativa:
+// todo el contenido vive en el texto.
+import { Image } from 'astro:assets';
+import { poses, type Pose } from '../data/poses';
+
+interface Props {
+  pose: Pose;
+  clip?: boolean;
+  eager?: boolean;
+  class?: string;
+}
+const { pose, clip = false, eager = false, class: extra } = Astro.props;
+const asset = poses[pose];
+---
+
+<div class:list={['fig', `fig--${pose}`, extra]} data-fig={pose}>
+  {pose === 'desk' && <div class="fig__fill fig__fill--screen" />}
+  {
+    pose === 'paper' && (
+      <>
+        <div class="fig__fill fig__fill--paper" />
+        <div class="fig__fill fig__fill--paper-live" />
+      </>
+    )
+  }
+  <Image src={asset.image} alt="" width={pose === 'desk' ? 1040 : 520} loading={eager ? 'eager' : 'lazy'} />
+  {clip && <video data-src={asset.clip} style={asset.box} muted loop playsinline preload="none" />}
+</div>

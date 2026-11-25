@@ -1,8 +1,4 @@
 ---
-import '@fontsource-variable/geist';
-import '@fontsource-variable/geist-mono';
-import '@fontsource/instrument-serif/400.css';
-import '@fontsource/instrument-serif/400-italic.css';
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
@@ -13,9 +9,12 @@ interface Props {
   lang: Lang;
   title?: string;
   description?: string;
+  // Lo que marca el cajetín de la cabecera.
+  sheetNow: string;
+  sheetTotal: string;
 }
 
-const { lang, title, description } = Astro.props;
+const { lang, title, description, sheetNow, sheetTotal } = Astro.props;
 const t = ui[lang];
 const pageTitle = title ? `${title} — Juan Diego Vargas` : t.metaTitle;
 const pageDescription = description ?? t.metaDescription;
@@ -31,63 +30,34 @@ const pageDescription = description ?? t.metaDescription;
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={pageDescription} />
     <meta property="og:type" content="website" />
-    <meta name="color-scheme" content="dark light" />
+    <meta name="color-scheme" content="light" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <script is:inline>
+      // Marca que hay scripts: sin ella, todo el contenido se muestra en flujo normal.
       (function () {
-        var apply = function () {
-          var saved = null;
-          try {
-            saved = localStorage.getItem('theme');
-          } catch (e) {}
-          var theme = saved || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-          document.documentElement.dataset.theme = theme;
+        var mark = function () {
           document.documentElement.classList.add('js');
         };
-        apply();
-        document.addEventListener('astro:after-swap', apply);
+        mark();
+        document.addEventListener('astro:after-swap', mark);
+        // Si la escena no llega a arrancar (red, bloqueador), se vuelve al flujo normal
+        // para que ninguna hoja quede oculta.
+        setTimeout(function () {
+          var root = document.documentElement;
+          if (document.querySelector('[data-scene]') && root.dataset.scene !== 'ready') {
+            root.classList.remove('js');
+          }
+        }, 4000);
       })();
     </script>
     <ClientRouter />
   </head>
   <body>
     <a class="skip" href="#main">{t.skip}</a>
-    <Header lang={lang} />
+    <Header lang={lang} sheetNow={sheetNow} sheetTotal={sheetTotal} />
     <main id="main">
       <slot />
     </main>
     <Footer lang={lang} />
-    <script>
-      function init() {
-        const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const items = document.querySelectorAll<HTMLElement>('[data-reveal]');
-        if (reduce || !('IntersectionObserver' in window)) {
-          items.forEach((el) => el.classList.add('is-in'));
-        } else {
-          const io = new IntersectionObserver(
-            (entries) => {
-              for (const entry of entries) {
-                if (entry.isIntersecting) {
-                  entry.target.classList.add('is-in');
-                  io.unobserve(entry.target);
-                }
-              }
-            },
-            { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-          );
-          items.forEach((el) => io.observe(el));
-        }
-
-        const toggle = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
-        toggle?.addEventListener('click', () => {
-          const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
-          document.documentElement.dataset.theme = next;
-          try {
-            localStorage.setItem('theme', next);
-          } catch {}
-        });
-      }
-      document.addEventListener('astro:page-load', init);
-    </script>
   </body>
 </html>

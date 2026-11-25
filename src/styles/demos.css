@@ -1,0 +1,168 @@
+/* ---------- Demos ----------
+   El marco y la tabla que comparten DemoGrid.vue y DemoRoles.vue. */
+.demo {
+  position: relative;
+  max-width: 900px;
+  border: var(--line);
+  border-radius: var(--radius);
+  background: var(--sheet);
+  box-shadow: var(--shadow);
+}
+.demo__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 12px;
+  border-bottom: var(--line);
+}
+.demo__group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.demo__search {
+  flex: 1 1 210px;
+  max-width: 280px;
+  padding: 6px 10px;
+  border: var(--hair);
+  border-radius: 0;
+  background: var(--paper);
+  font-size: 14px;
+}
+/* El sello que rotula los datos como ficticios. */
+.demo__stamp {
+  position: absolute;
+  right: 14px;
+  top: -22px;
+  z-index: 1;
+  background: var(--sheet);
+  opacity: 1;
+}
+.demo__scroll {
+  overflow-x: auto;
+}
+.demo table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.demo th {
+  padding: 0;
+  border-bottom: var(--line);
+  font: 600 11px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.demo th.center {
+  text-align: center;
+}
+.demo th > span,
+.demo__sort {
+  display: block;
+  padding: 10px 12px;
+}
+/* El encabezado que ordena es un botón que llena la celda. */
+.demo__sort {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+.demo__sort:hover {
+  background: var(--spot-soft);
+}
+.demo__sort:focus-visible,
+.demo__cell:focus-visible {
+  outline-offset: -3px;
+}
+.demo__arrow {
+  display: inline-block;
+  width: 1.4em;
+  text-align: center;
+}
+.demo td {
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--rule);
+}
+.demo tbody tr:hover td {
+  background: var(--spot-soft);
+}
+.demo td.num {
+  font-family: var(--mono);
+  text-align: right;
+  white-space: nowrap;
+}
+.demo th.num .demo__sort {
+  text-align: right;
+}
+.demo__empty {
+  color: var(--muted);
+  text-align: center;
+}
+.demo__stage {
+  padding: 2px 8px;
+  border: var(--hair);
+  border-radius: 999px;
+  font: 500 11px/1.3 var(--mono);
+  white-space: nowrap;
+}
+.demo__stage[data-stage='won'] {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.demo__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding: 9px 12px;
+  color: var(--muted);
+  font: 500 12px/1.3 var(--mono);
+}
+
+/* Matriz de permisos: cada casilla es un botón. */
+.demo td.demo__perm {
+  padding: 0;
+  text-align: center;
+}
+.demo__cell {
+  width: 100%;
+  padding: 7px 12px;
+  border: 0;
+  background: none;
+  font: 600 14px/1.55 var(--mono);
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.demo__cell[data-ok='false'] {
+  color: var(--faint);
+}
+.demo__cell.is-flash {
+  background: var(--spot-flash);
+}
+.demo__result {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-top: var(--line);
+  font: 500 13px/1.35 var(--mono);
+}
+.demo__code {
+  flex: none;
+  padding: 2px 8px;
+  border: var(--hair);
+}
+.demo__code[data-code='403'] {
+  border-color: var(--spot);
+  background: var(--spot);
+  color: var(--spot-ink);
+}

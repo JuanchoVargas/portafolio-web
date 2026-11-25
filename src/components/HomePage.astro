@@ -1,13 +1,17 @@
 ---
-import { Image } from 'astro:assets';
+// La portada (hoja 01) y, después, la escena con el resto de las hojas.
 import Base from '../layouts/Base.astro';
+import ContactForm from './ContactForm.astro';
+import DemoGrid from './DemoGrid.vue';
+import DemoRoles from './DemoRoles.vue';
+import Figure from './Figure.astro';
 import ProjectCard from './ProjectCard.astro';
 import Scene from './Scene.astro';
-import ContactForm from './ContactForm.astro';
+import Sheet from './Sheet.astro';
 import { ui, stackList, type Lang } from '../i18n/ui';
 import { getProjects } from '../lib/projects';
+import { sheetById, sheetTotal } from '../data/sheets';
 import { site } from '../data/site';
-import hello from '../assets/personaje/01-saludo.png';
 
 interface Props {
   lang: Lang;
@@ -17,70 +21,106 @@ const t = ui[lang];
 const projects = await getProjects(lang);
 // En desarrollo el formulario se muestra aunque no tenga a dónde enviar.
 const showForm = Boolean(site.formEndpoint) || import.meta.env.DEV;
+
+const labels = {
+  work: t.workEyebrow,
+  demo: t.demoEyebrow,
+  security: t.securityEyebrow,
+  services: t.servicesEyebrow,
+  about: t.aboutEyebrow,
+  contact: t.contactEyebrow,
+};
+
+// El tablero de proyectos: hasta tres recortes van en una fila; más, en dos.
+const rows = projects.length > 3 ? 2 : 1;
+const cols = Math.ceil(projects.length / rows);
+const work = sheetById('work');
 ---
 
-<Base lang={lang}>
-  <div class="wrap scene">
-    <div class="scene__content">
-      <section class="hero" data-station-for="hero">
+<Base lang={lang} sheetNow="01" sheetTotal={sheetTotal}>
+  <section class="hero wrap" data-sheet data-hero data-number="01">
+    <div class="hero__text">
+      <p class="mono">{t.role}</p>
+      <h1 class="hero__title">
+        {t.heroA} <em>{t.heroEm}</em> {t.heroB}
+      </h1>
+      <p class="hero__lead">{t.heroLead}</p>
+      <p class="hero__cta">
+        <a class="btn btn--primary" href="#work">{t.ctaWork}</a>
+        <a class="btn" href="#contact">{t.ctaContact}</a>
+      </p>
+      {site.available && <p class="stamp hero__stamp">{t.available}</p>}
+      <div class="dim hero__dim" aria-hidden="true"><span>{t.heroDim}</span></div>
+      <dl class="facts">
         {
-          site.available && (
-            <p class="pill hero__pill">
-              <span class="pill__dot" aria-hidden="true" />
-              {t.available}
-            </p>
-          )
+          t.stats.map((s) => (
+            <div>
+              <dt>{s.label}</dt>
+              <dd>{s.value}</dd>
+            </div>
+          ))
         }
-        <p class="eyebrow hero__role">{t.role}</p>
-        <h1 class="hero__title">
-          {t.heroA} <em>{t.heroEm}</em> {t.heroB}
-        </h1>
-        <p class="hero__lead">{t.heroLead}</p>
-        <p class="hero__cta">
-          <a class="btn btn--primary" href="#work">{t.ctaWork}</a>
-          <a class="btn" href="#contact">{t.ctaContact}</a>
-        </p>
-        <Image class="hero__fig" src={hello} alt="" width={420} loading="eager" />
-        <dl class="stats">
+      </dl>
+    </div>
+    <div class="hero__fig" aria-hidden="true">
+      <p class="balloon">{t.sayHero}</p>
+      <Figure pose="hello" clip eager />
+      <div class="dim-v"><span>{t.heroHeight}</span></div>
+    </div>
+    <aside class="legend" aria-label={t.legendTitle}>
+      <p class="mono legend__title">{t.legendTitle}</p>
+      <ul class="legend__list">
+        <li><span class="legend__key" aria-hidden="true">↓</span>{t.legendScroll}</li>
+        <li class="legend__pinned"><span class="legend__key legend__key--dot" aria-hidden="true">02</span>{t.legendRail}</li>
+        <li><span class="legend__key legend__key--stamp" aria-hidden="true">demo</span>{t.legendDemo}</li>
+        <li><span class="legend__key legend__key--hand" aria-hidden="true">↖</span>{t.legendNote}</li>
+      </ul>
+    </aside>
+  </section>
+
+  <Scene lang={lang} labels={labels}>
+    <Sheet id="work" lang={lang} eyebrow={labels.work} title={t.workTitle} first>
+      <div class="work">
+        <div class="board" style={`--cols:${cols};--rows:${rows}`}>
           {
-            t.stats.map((s) => (
-              <div class="stats__item">
-                <dt>{s.label}</dt>
-                <dd>{s.value}</dd>
-              </div>
+            projects.map((p, i) => (
+              <ProjectCard project={p} lang={lang} index={i} detail={`${t.detWord} ${work.letter}${i + 1}`} />
             ))
           }
-        </dl>
-      </section>
-
-      <section class="section" id="work" data-station-for="work">
-        <header class="section__head" data-reveal>
-          <p class="eyebrow">{t.workEyebrow}</p>
-          <h2 class="section__title">{t.workTitle}</h2>
-        </header>
-        <div class="pcards">
-          {projects.map((p, i) => <ProjectCard project={p} lang={lang} index={i} />)}
         </div>
-      </section>
+        <p class="note hand">{t.noteWork}</p>
+      </div>
+    </Sheet>
 
-      <section class="section" id="services" data-station-for="services">
-        <header class="section__head" data-reveal>
-          <p class="eyebrow">{t.servicesEyebrow}</p>
-          <h2 class="section__title">{t.servicesTitle}</h2>
-        </header>
-        <ol class="services">
+    <Sheet id="demo" lang={lang} eyebrow={labels.demo} title={t.demoTitle}>
+      <DemoGrid client:visible t={t.demoGrid} lang={lang} stamp={t.fictional} />
+      <p class="note hand sheet__note">{t.noteGrid}</p>
+    </Sheet>
+
+    <Sheet id="security" lang={lang} eyebrow={labels.security} title={t.securityTitle}>
+      <DemoRoles client:visible t={t.demoRoles} stamp={t.fictional} />
+      <p class="note hand sheet__note">{t.noteRoles}</p>
+    </Sheet>
+
+    <Sheet id="services" lang={lang} eyebrow={labels.services} title={t.servicesTitle}>
+      <div class="services">
+        <ol class="list">
           {
             t.services.map((s, i) => (
-              <li class="service" data-reveal style={`--d:${i * 60}ms`}>
-                <span class="service__num">{i + 1}</span>
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
+              <li>
+                <span class="list__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                </div>
               </li>
             ))
           }
         </ol>
-        <div class="review" data-reveal>
-          <p class="review__title">{t.reviewTitle}</p>
+        <div class="cut review" style="--r:1.2deg">
+          <p class="label">{t.reviewTitle}</p>
           <ul class="review__list">
             <li class="check">
               <span class="check__mark" aria-hidden="true">✓</span>
@@ -107,16 +147,16 @@ const showForm = Boolean(site.formEndpoint) || import.meta.env.DEV;
             </li>
           </ul>
         </div>
-      </section>
+      </div>
+    </Sheet>
 
-      <section class="section" id="about" data-station-for="about">
-        <div data-reveal>
-          <p class="eyebrow">{t.aboutEyebrow}</p>
-          <h2 class="section__title">{t.aboutTitle}</h2>
-          {t.about.map((p) => <p class="about__p">{p}</p>)}
+    <Sheet id="about" lang={lang} eyebrow={labels.about} title={t.aboutTitle}>
+      <div class="about">
+        <div class="about__text">
+          {t.about.map((p) => <p>{p}</p>)}
         </div>
-        <div class="about__side" data-reveal>
-          <h3 class="about__h">{t.credentialsTitle}</h3>
+        <div>
+          <h3 class="label">{t.credentialsTitle}</h3>
           <ul class="creds">
             {
               t.credentials.map((c) => (
@@ -127,60 +167,48 @@ const showForm = Boolean(site.formEndpoint) || import.meta.env.DEV;
               ))
             }
           </ul>
-          <h3 class="about__h">{t.stackTitle}</h3>
+          <h3 class="label">{t.stackTitle}</h3>
           <ul class="chips">
             {stackList.map((s) => <li>{s}</li>)}
           </ul>
         </div>
-      </section>
+      </div>
+    </Sheet>
 
-      <section class="section contact" id="contact" data-station-for="contact">
-        <p class="eyebrow">{t.contactEyebrow}</p>
-        <h2 class="contact__title">{t.contactTitle}</h2>
-        <p class="contact__lead">{t.contactLead}</p>
-        {
-          showForm ? (
-            <>
-              <ContactForm lang={lang} />
-              <p class="contact__alt">
+    <Sheet id="contact" lang={lang} eyebrow={labels.contact} title={t.contactTitle}>
+      <div class:list={['contact', showForm && 'contact--form']}>
+        <div>
+          <p class="contact__lead">{t.contactLead}</p>
+          {
+            showForm ? (
+              <p class="links contact__alt">
                 {t.contactAlt}
-                <a class="link-arrow" href={site.linkedin} rel="noopener">LinkedIn</a>
-                <a class="link-arrow" href={site.github} rel="noopener">GitHub</a>
+                <a class="link" href={site.linkedin} rel="noopener">LinkedIn</a>
+                <a class="link" href={site.github} rel="noopener">GitHub</a>
               </p>
-            </>
-          ) : (
-            <p class="hero__cta">
-              <a class="btn btn--primary" href={site.linkedin} rel="noopener">{t.contactLinkedin}</a>
-              <a class="btn" href={site.github} rel="noopener">{t.contactGithub}</a>
-            </p>
-          )
-        }
-      </section>
-    </div>
-
-    <Scene lang={lang} />
-  </div>
+            ) : (
+              <p class="links contact__cta">
+                <a class="btn btn--primary" href={site.linkedin} rel="noopener">{t.contactLinkedin}</a>
+                <a class="btn" href={site.github} rel="noopener">{t.contactGithub}</a>
+              </p>
+            )
+          }
+        </div>
+        {showForm && <ContactForm lang={lang} />}
+      </div>
+    </Sheet>
+  </Scene>
 </Base>
 
 <script>
-  // El hallazgo de la revisión de ejemplo se arregla cuando queda a la vista.
-  function init() {
-    const bad = document.querySelector<HTMLElement>('[data-review-bad]');
+  import { SHEET_ENTER } from '../lib/events';
+
+  // El hallazgo de la revisión de ejemplo se arregla a la vista, poco después
+  // de que entra su hoja.
+  document.addEventListener(SHEET_ENTER, (e) => {
+    const bad = (e.target as HTMLElement).querySelector('[data-review-bad]');
     if (!bad) return;
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-      bad.classList.add('is-fixed');
-      return;
-    }
-    const io = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          io.disconnect();
-          setTimeout(() => bad.classList.add('is-fixed'), 2200);
-        }
-      },
-      { threshold: 0.9 },
-    );
-    io.observe(bad);
-  }
-  document.addEventListener('astro:page-load', init);
+    const wait = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 2200;
+    setTimeout(() => bad.classList.add('is-fixed'), wait);
+  });
 </script>

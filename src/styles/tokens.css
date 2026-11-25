@@ -1,0 +1,86 @@
+/* ==========================================================================
+   Valores de diseño.
+   Este es el único archivo que cambia para darle otra piel al sitio: fuentes,
+   colores, bordes, sombras, curvas y medidas generales. El resto del CSS solo
+   consume estas variables.
+   ========================================================================== */
+
+/* Fuentes, servidas desde el propio sitio. */
+@import '@fontsource-variable/archivo/wdth.css';
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-500.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+@import '@fontsource/caveat/latin-700.css';
+
+:root {
+  color-scheme: light;
+
+  /* ---------- Colores ---------- */
+  --paper: #f2ede2; /* el fondo: papel */
+  --sheet: #fffdf7; /* superficies: hojas pegadas sobre el papel */
+  --ink: #15130f; /* texto y bordes */
+  --muted: #5d574b; /* texto secundario */
+  --faint: #b9b2a2; /* marcas apagadas */
+  --spot: #e5432a; /* el único color de acento */
+  --spot-ink: #fffdf7; /* texto sobre el acento */
+  --spot-soft: rgba(229, 67, 42, 0.1); /* resaltado suave */
+  --spot-flash: rgba(229, 67, 42, 0.24); /* destello al pulsar */
+  --pencil: #2a4a86; /* cotas y notas a lápiz */
+  --grid: rgba(38, 72, 128, 0.11); /* cuadrícula fina */
+  --grid-strong: rgba(38, 72, 128, 0.2); /* cuadrícula mayor */
+  --tape: rgba(240, 206, 92, 0.72); /* cinta de los recortes */
+  --tape-edge: rgba(0, 0, 0, 0.18);
+  --rule: rgba(21, 19, 15, 0.15); /* renglones de tablas */
+
+  /* ---------- Tipografías ---------- */
+  --display: 'Archivo Variable', 'Arial Narrow', sans-serif;
+  --display-weight: 900;
+  --display-stretch: 68%;
+  --body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --hand: 'Caveat', 'Segoe Print', cursive;
+
+  /* ---------- Bordes y sombras ---------- */
+  --line: 2px solid var(--ink);
+  --hair: 1px solid var(--ink);
+  --pencil-line: 1.5px solid var(--pencil);
+  --shadow: 5px 5px 0 var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow-press: 2px 2px 0 var(--ink);
+  --radius: 4px;
+  --radius-balloon: 18px;
+
+  /* ---------- Curvas y tiempos ---------- */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-walk: cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  --walk-ms: 1100ms; /* lo que tarda el personaje en cruzar la pantalla */
+
+  /* ---------- Medidas generales ---------- */
+  --z: 1; /* ampliación del contenido en monitores grandes (ver abajo) */
+  --wrap-base: 1280px;
+  --wrap: calc(var(--wrap-base) * var(--z));
+  --gutter: clamp(16px, 3vw, 28px);
+  --header-h: calc(64px * var(--z));
+  --grid-step: 24px; /* paso de la cuadrícula fina; la mayor es cinco pasos */
+}
+
+/* En monitores grandes el contenido crece con la pantalla en vez de quedar
+   pequeño en medio del papel. Solo cambia este factor. */
+@media (min-width: 1600px) and (min-height: 900px) {
+  :root {
+    --z: 1.15;
+  }
+}
+@media (min-width: 1900px) and (min-height: 1060px) {
+  :root {
+    --z: 1.3;
+  }
+}
+@media (min-width: 2400px) and (min-height: 1300px) {
+  :root {
+    --z: 1.6;
+  }
+}

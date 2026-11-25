@@ -5,6 +5,7 @@ import Base from '../layouts/Base.astro';
 import Shot from './Shot.astro';
 import { ui, type Lang } from '../i18n/ui';
 import { getProjects, homePath, projectPath, slugOf, type Project } from '../lib/projects';
+import { sheetById } from '../data/sheets';
 
 interface Props {
   project: Project;
@@ -18,21 +19,29 @@ const { Content } = await render(project);
 const all = await getProjects(lang);
 const position = all.findIndex((p) => p.id === project.id);
 const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
+// En el cajetín, la página es un detalle de la hoja de proyectos.
+const letter = sheetById('work').letter;
 ---
 
-<Base lang={lang} title={d.title} description={d.tagline}>
+<Base
+  lang={lang}
+  title={d.title}
+  description={d.tagline}
+  sheetNow={`${letter}${position + 1}`}
+  sheetTotal={`${letter}${all.length}`}
+>
   <article class="project">
     <header class="wrap project__head">
-      <a class="link-back" href={`${homePath(lang)}#work`}>← {t.backToWork}</a>
-      <p class="pcard__meta">
+      <a class="mono link-back" href={`${homePath(lang)}#work`}>← {t.backToWork}</a>
+      <p class="meta">
         <span class:list={['tag', d.kind === 'source' && 'tag--on']}>
           {d.kind === 'source' ? t.kindSource : t.kindCase}
         </span>
-        <span class="pcard__status">{d.status}</span>
+        <span class="meta__status">{d.status}</span>
       </p>
       <h1 class="project__title">{d.title}</h1>
       <p class="project__tagline">{d.tagline}</p>
-      <p class="pcard__links">
+      <p class="links">
         {d.live && <a class="btn btn--primary" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
         {d.repo && <a class="btn" href={d.repo} rel="noopener">{d.kind === 'source' ? t.viewCode : t.viewDocs} ↗</a>}
       </p>
@@ -41,9 +50,9 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
     {
       d.metrics.length > 0 && (
         <div class="wrap">
-          <dl class="stats stats--project">
+          <dl class="metrics">
             {d.metrics.map((m) => (
-              <div class="stats__item">
+              <div>
                 <dt>{m.label}</dt>
                 <dd>{m.value}</dd>
               </div>
@@ -62,14 +71,14 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
         <Content />
       </div>
       <aside class="project__side">
-        <h2 class="about__h">{t.projectStack}</h2>
+        <h2 class="label">{t.projectStack}</h2>
         <ul class="chips">
           {d.stack.map((s) => <li>{s}</li>)}
         </ul>
         {
           d.year && (
             <>
-              <h2 class="about__h">{t.projectYear}</h2>
+              <h2 class="label">{t.projectYear}</h2>
               <p class="project__fact">{d.year}</p>
             </>
           )
@@ -77,8 +86,8 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
         {
           d.highlights.length > 0 && (
             <>
-              <h2 class="about__h">{t.projectHighlights}</h2>
-              <ul class="pcard__points">
+              <h2 class="label">{t.projectHighlights}</h2>
+              <ul class="points">
                 {d.highlights.map((h) => (
                   <li>{h}</li>
                 ))}
@@ -92,7 +101,7 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
     {
       d.gallery.length > 0 && (
         <section class="wrap project__gallery">
-          <h2 class="eyebrow">{t.projectGallery}</h2>
+          <h2 class="mono eyebrow">{t.projectGallery}</h2>
           <div class="gallery">
             {d.gallery.map((g) => (
               <figure class="gallery__item">
@@ -115,7 +124,7 @@ const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
       next && (
         <a class="next" href={projectPath(lang, slugOf(next))}>
           <div class="wrap next__in">
-            <span class="eyebrow">{t.nextProject}</span>
+            <span class="mono eyebrow">{t.nextProject}</span>
             <span class="next__title">{next.data.title} →</span>
           </div>
         </a>

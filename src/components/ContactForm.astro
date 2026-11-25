@@ -1,5 +1,5 @@
 ---
-// La hoja que entrega el personaje. Envía a `site.formEndpoint`; sin JavaScript
+// El formulario de contacto. Envía a `site.formEndpoint`; sin JavaScript
 // el navegador hace el envío normal del formulario.
 import { ui, type Lang } from '../i18n/ui';
 import { site } from '../data/site';
@@ -16,26 +16,27 @@ if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
 ---
 
 <form
-  class="sheet"
+  class="form"
   method="post"
   action={site.formEndpoint || undefined}
   data-contact-form
-  data-reveal
   data-ok={t.formOk}
   data-error={t.formError}
   data-offline={t.formOffline}
   data-sending={t.formSending}
 >
+  <div class="form__row">
+    <p class="field">
+      <label class="label" for="cf-name">{t.formName}</label>
+      <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required />
+    </p>
+    <p class="field">
+      <label class="label" for="cf-email">{t.formEmail}</label>
+      <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="160" required />
+    </p>
+  </div>
   <p class="field">
-    <label for="cf-name">{t.formName}</label>
-    <input id="cf-name" name="name" type="text" autocomplete="name" maxlength="120" required />
-  </p>
-  <p class="field">
-    <label for="cf-email">{t.formEmail}</label>
-    <input id="cf-email" name="email" type="email" autocomplete="email" maxlength="160" required />
-  </p>
-  <p class="field">
-    <label for="cf-message">{t.formMessage}</label>
+    <label class="label" for="cf-message">{t.formMessage}</label>
     <textarea id="cf-message" name="message" maxlength="4000" required></textarea>
   </p>
   <p class="field field--trap" aria-hidden="true">
@@ -43,7 +44,7 @@ if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
     <input id="cf-check" name="leave_empty" type="text" tabindex="-1" autocomplete="off" />
   </p>
   <button class="btn btn--primary" type="submit">{t.formSend}</button>
-  <p class="sheet__note" data-form-note role="status">{t.formNote}</p>
+  <p class="form__note" data-form-note role="status">{t.formNote}</p>
 </form>
 
 <script>

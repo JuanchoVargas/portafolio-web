@@ -1,0 +1,48 @@
+---
+// Una hoja del plano: rótulo, título con su marca de detalle, cota y contenido.
+// Apilada, muestra al inicio la imagen fija de su rol; en la escena fija esa
+// imagen se oculta y el rol lo interpreta el personaje de Scene.astro.
+import Figure from './Figure.astro';
+import { ui, type Lang } from '../i18n/ui';
+import { sheetById, sheetTotal, type SheetId } from '../data/sheets';
+
+interface Props {
+  id: SheetId;
+  lang: Lang;
+  eyebrow: string;
+  title: string;
+  first?: boolean;
+}
+const { id, lang, eyebrow, title, first = false } = Astro.props;
+const t = ui[lang];
+const sheet = sheetById(id);
+const cast = t.cast[sheet.pose as keyof typeof t.cast];
+---
+
+<section
+  class:list={['sheet', first && 'is-on']}
+  id={id}
+  tabindex="-1"
+  aria-labelledby={`${id}-title`}
+  data-sheet
+  data-number={sheet.number}
+  data-side={sheet.side}
+  data-pose={sheet.pose}
+  data-alt-pose={sheet.altPose}
+>
+  <div class="sheet__fig" aria-hidden="true">
+    <Figure pose={sheet.pose} />
+    <p class="balloon balloon--side">{cast.say}</p>
+    <p class="mono sheet__role">{cast.role} · {t.figWord} {sheet.number}</p>
+  </div>
+  <div class="sheet__in">
+    <p class="mono eyebrow">{t.sheetWord} {sheet.number} · {eyebrow}</p>
+    <h2 class="sheet__title" id={`${id}-title`}>
+      <span class="detail" aria-hidden="true">{sheet.letter}</span>{title}
+    </h2>
+    <div class="dim sheet__dim" aria-hidden="true"><span>{sheet.number} / {sheetTotal}</span></div>
+    <div class="sheet__body">
+      <slot />
+    </div>
+  </div>
+</section>

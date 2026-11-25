@@ -1,0 +1,817 @@
+/* ---------- Portada: la hoja 01, en flujo normal ---------- */
+.hero {
+  position: relative;
+  display: grid;
+  gap: 28px;
+  padding-top: 36px;
+}
+.hero__text {
+  position: relative;
+}
+.hero__title {
+  max-width: 18ch;
+  margin-top: 14px;
+  font-size: clamp(42px, min(6.2vw, 9.6vh), 100px);
+}
+/* La palabra clave: bloque rojo, un poco inclinado. */
+.hero__title em {
+  display: inline-block;
+  padding: 0 0.12em;
+  background: var(--spot);
+  color: var(--spot-ink);
+  box-shadow: var(--shadow);
+  font-style: normal;
+  rotate: -1.5deg;
+}
+.hero__lead {
+  max-width: 54ch;
+  margin: 18px 0;
+  color: var(--muted);
+  font-size: 17px;
+}
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.hero__stamp {
+  margin-top: 26px;
+}
+.hero__dim {
+  max-width: 660px;
+  margin-top: 24px;
+}
+.facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 22px;
+  max-width: 660px;
+  padding-bottom: 18px;
+}
+.facts > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.facts dd {
+  font: var(--display-weight) 38px/1 var(--display);
+  font-stretch: var(--display-stretch);
+}
+.facts dt {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.hero__fig {
+  position: relative;
+  justify-self: center;
+  height: min(52vh, 380px);
+  margin-top: 64px;
+}
+.hero__fig .balloon {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: max-content;
+  translate: -50% 0;
+}
+.hero__fig .dim-v {
+  right: 6%;
+  top: 6%;
+  bottom: 3%;
+}
+
+@media (min-width: 620px) {
+  .facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Leyenda: cómo se lee y se recorre el plano. */
+.legend {
+  display: grid;
+  gap: 8px 22px;
+  padding-block: 12px 14px;
+  border-top: var(--line);
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.legend__title {
+  color: var(--ink);
+  font-weight: 600;
+}
+.legend__list {
+  display: grid;
+  gap: 8px 22px;
+}
+.legend__list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend__pinned {
+  display: none !important;
+}
+.legend__key {
+  display: grid;
+  flex: none;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding-inline: 5px;
+  border: var(--hair);
+  background: var(--sheet);
+  color: var(--ink);
+  font: 600 11px/1 var(--mono);
+}
+.legend__key--dot {
+  border-radius: 50%;
+  padding: 0;
+}
+.legend__key--stamp {
+  border: 3px double var(--spot);
+  color: var(--spot);
+  rotate: -5deg;
+}
+.legend__key--hand {
+  border: 0;
+  background: none;
+  color: var(--pencil);
+  font: 700 20px/1 var(--hand);
+}
+
+@media (min-width: 1000px) {
+  .hero {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    grid-template-rows: 1fr auto;
+    align-items: center;
+    gap: 0 40px;
+    min-height: calc(100vh - var(--header-h));
+    padding-top: 20px;
+  }
+  .hero__text {
+    zoom: var(--z);
+  }
+  .hero__stamp {
+    position: absolute;
+    right: 0;
+    top: -6px;
+    margin: 0;
+  }
+  /* El personaje se para sobre la línea de la leyenda. */
+  .hero__fig {
+    align-self: end;
+    height: min(64vh, calc(560px * var(--z)));
+  }
+  .hero__fig .balloon {
+    zoom: var(--z);
+  }
+  .legend {
+    grid-column: 1 / -1;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    zoom: var(--z);
+  }
+  .legend__list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
+
+/* ---------- Hojas ----------
+   Por defecto van apiladas en flujo normal, cada una con la imagen fija de su
+   rol. Así se ven en celular, en pantallas bajas, con movimiento reducido y
+   sin scripts. */
+.scene {
+  border-top: var(--line);
+}
+.rail,
+.actor {
+  display: none;
+}
+.sheet {
+  display: grid;
+  gap: 22px;
+  padding-block: 44px 56px;
+  padding-inline: max(var(--gutter), calc((100% - var(--wrap)) / 2 + var(--gutter)));
+  border-bottom: var(--line);
+}
+.sheet:last-child {
+  border-bottom: 0;
+}
+.sheet:focus {
+  outline: none;
+}
+.sheet__fig {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  gap: 10px 18px;
+}
+.sheet__fig .fig {
+  grid-row: 1 / 3;
+  height: 190px;
+}
+.sheet__fig .fig--desk {
+  height: 150px;
+}
+.sheet__role {
+  align-self: start;
+  margin-top: 6px;
+  color: var(--muted);
+}
+.sheet__in {
+  min-width: 0;
+}
+.sheet__title {
+  margin-top: 8px;
+  font-size: clamp(28px, min(3.4vw, 5.6vh), 52px);
+}
+.sheet__dim {
+  max-width: 340px;
+  margin-top: 22px;
+}
+.sheet__body {
+  margin-top: 16px;
+}
+.sheet__note {
+  margin-top: 16px;
+}
+
+/* En celular el personaje asoma de medio cuerpo por el costado de la hoja,
+   un lado distinto en cada una. */
+@media (max-width: 999px) {
+  .sheet__fig {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 176px;
+    overflow: hidden;
+    border-bottom: var(--pencil-line);
+  }
+  .sheet[data-side='right'] .sheet__fig {
+    flex-direction: row-reverse;
+  }
+  .sheet__fig .fig {
+    align-self: flex-start;
+    height: 300px;
+    margin-inline: -14px;
+  }
+  .sheet__fig .balloon {
+    margin-bottom: 26px;
+  }
+  .sheet[data-side='right'] .balloon--side::after {
+    left: auto;
+    right: -10px;
+    rotate: -45deg;
+  }
+  .sheet__role {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    margin: 0;
+  }
+  .sheet[data-side='right'] .sheet__role {
+    right: auto;
+    left: 0;
+  }
+  /* Sentado es más ancho: el globo va sobre la mesa. */
+  .sheet__fig .fig--desk {
+    height: 250px;
+    margin-inline: 0 -34px;
+  }
+  .sheet__fig:has(.fig--desk) .balloon {
+    position: absolute;
+    left: 0;
+    top: 10px;
+    max-width: 15ch;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1000px) {
+  .sheet {
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 44px;
+    align-items: start;
+  }
+  .sheet[data-side='right'] {
+    grid-template-columns: minmax(0, 1fr) 250px;
+  }
+  .sheet[data-side='right'] .sheet__fig {
+    order: 2;
+  }
+  .sheet__fig {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+    justify-items: center;
+    gap: 14px;
+  }
+  .sheet__fig .balloon {
+    grid-row: 1;
+  }
+  .sheet__fig .fig {
+    grid-row: 2;
+    height: 360px;
+  }
+  .sheet__role {
+    grid-row: 3;
+  }
+  .sheet__fig .fig--desk {
+    width: 130%;
+    height: auto;
+  }
+  .sheet__fig .balloon--side::after {
+    left: 46%;
+    bottom: -10px;
+    rotate: 45deg;
+  }
+}
+
+/* ---------- Contenido de cada hoja ---------- */
+
+/* Proyectos: el tablero de recortes. */
+.work {
+  display: grid;
+  gap: 18px;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 26px 34px;
+  align-items: start;
+  padding-top: 14px;
+}
+.pcut .shot__blank-title {
+  font-size: 22px;
+}
+.pcut .shot {
+  border: var(--hair);
+}
+.pcut__cap {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-top: 8px;
+}
+.pcut__title {
+  font: var(--display-weight) 19px/1.05 var(--display);
+  font-stretch: var(--display-stretch);
+  text-transform: uppercase;
+}
+.pcut__det {
+  flex: none;
+  color: var(--muted);
+  font-size: 11px;
+}
+.pcut__tagline {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* Servicios y la revisión de ejemplo. */
+.services {
+  display: grid;
+  gap: 34px;
+  align-items: start;
+}
+.review {
+  max-width: 420px;
+  margin-top: 14px;
+  padding: 16px 18px 18px;
+}
+.review__list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+.check {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.check__mark {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border: var(--hair);
+  border-radius: 50%;
+  font: 600 12px/1 var(--mono);
+}
+.check__state {
+  font: 500 10px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* El hallazgo va en rojo hasta que se arregla. */
+.check--bad:not(.is-fixed) .check__mark {
+  border-color: var(--spot);
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.check--bad:not(.is-fixed) .check__state {
+  color: var(--spot);
+}
+.check--bad .when-fixed,
+.check--bad.is-fixed .when-found {
+  display: none;
+}
+.check--bad.is-fixed .when-fixed {
+  display: inline;
+}
+
+/* Perfil. */
+.about {
+  display: grid;
+  gap: 28px;
+}
+.about__text p {
+  max-width: 62ch;
+  font-size: 15px;
+}
+.about__text p + p {
+  margin-top: 12px;
+}
+.creds {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.creds li {
+  display: grid;
+  padding-left: 12px;
+  border-left: 3px solid var(--spot);
+  line-height: 1.35;
+}
+.creds strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+.creds span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Contacto. */
+.contact {
+  display: grid;
+  gap: 28px;
+  align-items: start;
+}
+.contact__lead {
+  max-width: 46ch;
+  color: var(--muted);
+  font-size: 17px;
+}
+.contact__alt {
+  margin-top: 22px;
+  color: var(--muted);
+}
+.contact__cta {
+  margin-top: 24px;
+}
+.form {
+  display: grid;
+  gap: 12px;
+  max-width: 500px;
+  padding: 18px 20px 20px;
+  border: var(--line);
+  background: var(--sheet);
+  box-shadow: var(--shadow);
+}
+.form__row {
+  display: grid;
+  gap: 12px 16px;
+}
+.field {
+  display: grid;
+  gap: 2px;
+}
+.field .label {
+  margin: 0;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: var(--line);
+  border-radius: 0;
+  background: transparent;
+}
+.field textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: none;
+  border-bottom-color: var(--spot);
+  background: var(--spot-soft);
+}
+.field--trap {
+  position: absolute;
+  left: -9999px;
+}
+.form .btn {
+  justify-self: start;
+}
+.form__note {
+  color: var(--muted);
+  font-size: 13px;
+}
+.form__note[data-state='ok'] {
+  color: var(--ink);
+  font-weight: 600;
+}
+.form__note[data-state='error'] {
+  color: var(--spot);
+  font-weight: 600;
+}
+
+@media (min-width: 620px) {
+  .form__row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 1000px) {
+  .services {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  }
+  .about {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    gap: 36px;
+  }
+  .contact--form {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 40px;
+  }
+}
+
+/* ---------- Escena fija ----------
+   En pantallas amplias, con scripts y sin movimiento reducido, la página deja
+   de bajar: el contenedor es alto y su hijo se queda pegado; cada tramo de
+   scroll pasa a la hoja siguiente. La misma condición está en Scene.astro. */
+@media (min-width: 1000px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .js .scene {
+    --step: 70vh; /* scroll que dura cada hoja */
+    --rail-w: calc(56px * var(--z));
+    --pin-h: calc(100vh - var(--header-h));
+    --fig-h: min(62vh, calc(540px * var(--z)));
+    --actor-w: calc(var(--fig-h) * 0.67);
+    /* El contenido y el personaje comparten un escenario centrado: en
+       pantallas muy anchas no se separan hacia los bordes. */
+    --stage: calc(1320px * var(--z));
+    --edge: max(0px, calc((100cqw - var(--stage)) / 2));
+    height: calc(var(--pin-h) + var(--sheets) * var(--step));
+  }
+  .legend__pinned {
+    display: flex !important;
+  }
+  .js .scene__pin {
+    position: sticky;
+    top: var(--header-h);
+    display: grid;
+    grid-template-columns: var(--rail-w) minmax(0, 1fr);
+    height: var(--pin-h);
+    overflow: clip;
+  }
+
+  /* Riel: el número de cada hoja. */
+  .js .rail {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: calc(18px * var(--z));
+    border-right: var(--line);
+    background: var(--sheet);
+  }
+  /* Al pie del riel, la pista de que se sigue bajando. */
+  .js .rail::after {
+    content: attr(data-cue) ' ↓';
+    zoom: var(--z);
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    translate: -50% 0;
+    writing-mode: vertical-rl;
+    color: var(--muted);
+    font: 600 11px/1 var(--mono);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    animation: cue 1.8s var(--ease) infinite;
+  }
+  @keyframes cue {
+    50% {
+      translate: -50% 6px;
+    }
+  }
+  .rail a {
+    zoom: var(--z);
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: var(--line);
+    border-radius: 50%;
+    background: var(--sheet);
+    font: 600 12px/1 var(--mono);
+    transition:
+      background 0.3s,
+      box-shadow 0.3s;
+  }
+  .rail a:hover {
+    background: var(--spot-soft);
+  }
+  .rail a[aria-current='true'] {
+    background: var(--spot);
+    color: var(--spot-ink);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .js .scene__body {
+    position: relative;
+    container-type: inline-size;
+  }
+
+  /* Cada hoja ocupa toda la pantalla; solo la activa se ve. */
+  .js .sheet {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    padding: 24px calc(var(--edge) + 44px);
+    border: 0;
+    opacity: 0;
+    visibility: hidden;
+    translate: 80px 0;
+    rotate: 0.8deg;
+    transition:
+      opacity 0.45s var(--ease),
+      translate 0.6s var(--ease),
+      rotate 0.6s var(--ease),
+      visibility 0s 0.45s;
+  }
+  .js .sheet.is-past {
+    translate: -80px 0;
+    rotate: -0.8deg;
+  }
+  .js .sheet.is-on {
+    opacity: 1;
+    visibility: visible;
+    translate: none;
+    rotate: none;
+    transition-delay: 0s;
+  }
+  /* El contenido deja libre el lado donde está el personaje. */
+  .js .sheet[data-side='left'] {
+    padding-left: calc(var(--edge) + var(--actor-w) + 52px);
+  }
+  .js .sheet[data-side='right'] {
+    padding-right: calc(var(--edge) + var(--actor-w) + 52px);
+  }
+  .js .sheet__fig {
+    display: none;
+  }
+  .js .sheet__in {
+    zoom: var(--z);
+  }
+  /* Con espacio a los lados, el sello de las demos sobresale del marco. */
+  .js .demo__stamp {
+    right: -14px;
+  }
+
+  /* El personaje: una sola figura que cruza de un lado al otro. */
+  .js .actor {
+    position: absolute;
+    left: var(--edge);
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    width: var(--actor-w);
+    padding: 16px 0 14px 14px;
+    pointer-events: none;
+    transition: translate var(--walk-ms) var(--ease-walk);
+  }
+  .js .actor[data-side='right'] {
+    padding: 16px 14px 14px 0;
+    translate: calc(100cqw - 100% - 2 * var(--edge)) 0;
+  }
+  .actor__figs {
+    position: relative;
+    flex: none;
+    width: 100%;
+    height: var(--fig-h);
+  }
+  /* El piso. */
+  .actor__figs::after {
+    content: '';
+    position: absolute;
+    inset: auto 0 2.8%;
+    z-index: -1;
+    border-top: var(--pencil-line);
+  }
+  .actor .fig {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    translate: -50% 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .actor .fig.is-on {
+    opacity: 1;
+  }
+  /* Sentado ocupa menos alto y la mesa sale hacia el contenido. */
+  .actor .fig--desk {
+    height: 76%;
+    translate: -47% 0;
+  }
+  /* La imagen de caminar mira a la derecha: se voltea para ir a la izquierda. */
+  .actor .fig--walk {
+    scale: var(--dir, 1) 1;
+  }
+  .actor .balloon,
+  .actor__role {
+    transition: opacity 0.2s;
+  }
+  .actor .balloon,
+  .actor__role {
+    zoom: var(--z);
+  }
+  .actor[data-pose='desk'] .balloon {
+    translate: 0 calc(var(--fig-h) * 0.2 / var(--z));
+  }
+  .actor.is-walking .balloon,
+  .actor.is-walking .actor__role {
+    opacity: 0;
+  }
+  .actor__role {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 5px 10px;
+    border: var(--line);
+    background: var(--sheet);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  /* Los recortes de proyectos se miden con el alto de la pantalla para que
+     el tablero siempre quepa: --rows filas de recortes más el encabezado de
+     la hoja. La nota a lápiz pasa al costado. */
+  .js .work {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+  }
+  .js .board {
+    --extra: 82px; /* lo que mide un recorte sin contar la captura */
+    --shot-h: calc(
+      (var(--pin-h) / var(--z) - 240px - var(--rows) * var(--extra) - (var(--rows) - 1) * 26px) / var(--rows)
+    );
+    flex: 0 1 calc(var(--cols) * (var(--shot-h) * 1.6 + 20px) + (var(--cols) - 1) * 34px);
+    grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  }
+  .js .work .note {
+    flex: 0 0 11ch;
+    align-items: flex-start;
+  }
+  .js .pcut__tagline {
+    display: none;
+  }
+}
+
+/* Con más alto, los recortes muestran también la descripción. */
+@media (min-width: 1000px) and (min-height: 1000px) and (prefers-reduced-motion: no-preference) {
+  .js .board {
+    --extra: 150px;
+  }
+  .js .pcut__tagline {
+    display: block;
+  }
+}

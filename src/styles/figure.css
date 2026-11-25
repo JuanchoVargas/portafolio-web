@@ -1,0 +1,72 @@
+/* ---------- El personaje ----------
+   Cada pose es una caja con la imagen fija y, encima, su clip. La caja toma el
+   alto de su contenedor; el ancho sale de la proporción de la imagen. */
+.fig {
+  position: relative;
+  flex: none;
+  height: 100%;
+  aspect-ratio: 939 / 1400;
+}
+.fig--desk {
+  aspect-ratio: 1875 / 1400;
+}
+.fig img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+/* El clip va encima de la imagen fija y la reemplaza cuando arranca. */
+.fig video {
+  position: absolute;
+  max-width: none;
+  opacity: 0;
+}
+.fig.is-live video {
+  opacity: 1;
+}
+.fig.is-live img {
+  opacity: 0;
+}
+
+/* La pantalla del portátil y la hoja vienen huecas: se pintan por detrás. */
+.fig__fill {
+  position: absolute;
+  inset: 0;
+}
+.fig__fill--screen {
+  clip-path: polygon(33.9% 31%, 39.6% 30.3%, 42% 41.8%, 37% 44.3%);
+  background: repeating-linear-gradient(8deg, var(--sheet) 0 7px, var(--pencil) 7px 9px);
+  animation: typing 1.4s steps(7) infinite;
+}
+@keyframes typing {
+  to {
+    background-position: 0 -63px;
+  }
+}
+/* En el clip la pantalla trae restos del recorte: el relleno va por delante. */
+.fig--desk.is-live .fig__fill--screen {
+  z-index: 1;
+}
+.fig__fill--paper {
+  clip-path: polygon(42.5% 35.4%, 59% 35.3%, 61.5% 45%, 39.9% 45%);
+  background:
+    linear-gradient(var(--faint), var(--faint)) 50% 38.2% / 11% 0.25% no-repeat,
+    linear-gradient(var(--faint), var(--faint)) 50% 40.2% / 13% 0.25% no-repeat,
+    linear-gradient(var(--faint), var(--faint)) 50% 42.2% / 9% 0.25% no-repeat,
+    var(--sheet);
+}
+/* En el clip la hoja se mueve: se pinta todo el torso por detrás y el dibujo
+   deja ver el relleno solo donde está la hoja. */
+.fig__fill--paper-live {
+  display: none;
+  clip-path: inset(33% 36% 52% 36%);
+  background: var(--sheet);
+}
+.fig--paper.is-live .fig__fill--paper {
+  display: none;
+}
+.fig--paper.is-live .fig__fill--paper-live {
+  display: block;
+}

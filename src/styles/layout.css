@@ -1,0 +1,83 @@
+/* ---------- Cabecera y pie ---------- */
+.site-header {
+  z-index: 50;
+  border-bottom: var(--line);
+}
+.site-header__in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  padding-block: 12px;
+}
+.brand {
+  font: 600 13px/1.3 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav {
+  display: flex;
+  gap: clamp(12px, 2vw, 24px);
+  margin-left: auto;
+}
+.nav a {
+  padding-block: 6px;
+  border-bottom: 2px solid transparent;
+}
+.nav a:hover {
+  border-bottom-color: var(--spot);
+}
+/* El cajetín solo cabe en pantallas anchas. */
+.site-header .titleblock {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  .site-header__lang {
+    margin-left: auto;
+  }
+  .nav {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1000px) {
+  .site-header {
+    position: sticky;
+    top: 0;
+    height: var(--header-h);
+  }
+  /* Crece con la pantalla, igual que el contenido. */
+  .site-header__in {
+    zoom: var(--z);
+    max-width: var(--wrap-base);
+    flex-wrap: nowrap;
+    height: 100%;
+    padding-block: 0;
+  }
+  .site-header .titleblock {
+    display: grid;
+  }
+}
+
+.site-footer {
+  border-top: var(--line);
+  background: var(--sheet);
+}
+.site-footer__in {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+  padding-block: 20px;
+}
+.site-footer__links {
+  display: flex;
+  gap: 20px;
+}
+.site-footer a:hover {
+  color: var(--spot);
+}
