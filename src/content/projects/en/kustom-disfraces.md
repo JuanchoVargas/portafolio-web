@@ -7,8 +7,18 @@ order: 3
 stack: ["Nuxt 4", "Vue 3", "TypeScript", "WooCommerce", "Mercado Pago", "PostgreSQL", "Vercel"]
 repo: "https://github.com/JuanchoVargas/ecommerce-disfraces"
 live: "https://www.disfraceskustom.com"
-cover: "../../../assets/projects/kustom-disfraces/04-carrito-checkout.png"
-gallery: []
+cover: "../../../assets/projects/kustom-disfraces/01-inicio.png"
+gallery:
+  - src: "../../../assets/projects/kustom-disfraces/02-catalogo.png"
+    alt: "Catalog of costumes for boys with filters by size, price and product line"
+  - src: "../../../assets/projects/kustom-disfraces/03-producto.png"
+    alt: "Product page with price, size selection, size guide and cart and WhatsApp buttons"
+  - src: "../../../assets/projects/kustom-disfraces/04-carrito-checkout.png"
+    alt: "Cart with the order summary and the step to payment"
+  - src: "../../../assets/projects/kustom-disfraces/05-guia-tallas.png"
+    alt: "Size guide with the measurement tables for each costume line"
+  - src: "../../../assets/projects/kustom-disfraces/06-celular.png"
+    alt: "The store on a phone: catalog, product page and size guide"
 highlights:
   - "The server recalculates every price by SKU and rejects a payment that does not match"
   - "Exactly one order per payment, even when the payment provider sends several notifications at once"

@@ -7,7 +7,18 @@ order: 2
 stack: [".NET 8", "ASP.NET Core", "EF Core", "SQL Server", "Vue 3", "xUnit"]
 repo: "https://github.com/JuanchoVargas/crm-gestion-comercial"
 live: "https://crm.nemedi.com"
-gallery: []
+cover: "../../../assets/projects/crm-gestion-comercial/01-panel.png"
+gallery:
+  - src: "../../../assets/projects/crm-gestion-comercial/02-cotizaciones.png"
+    alt: "Listado de cotizaciones con su estado, el total y el pedido que generó cada una al aprobarse"
+  - src: "../../../assets/projects/crm-gestion-comercial/03-pedidos.png"
+    alt: "Pedidos con la ruta de despacho, el estado y los documentos de cotización y salida enlazados"
+  - src: "../../../assets/projects/crm-gestion-comercial/04-consulta-precios.png"
+    alt: "Consulta de precios de una lista: costo, precio de venta, cómo se calcula y un color según el margen"
+  - src: "../../../assets/projects/crm-gestion-comercial/05-inventario-valorizado.png"
+    alt: "Inventario valorizado a costo, con el total y el peso de cada marca"
+  - src: "../../../assets/projects/crm-gestion-comercial/06-cartera.png"
+    alt: "Cartera por cobrar con los saldos por antigüedad y los documentos pendientes de cada cliente"
 highlights:
   - "Una sola instalación atiende a varias empresas, aisladas por 43 filtros globales de EF Core"
   - "Seguro por defecto: todo endpoint exige un usuario autenticado salvo que se marque como público"

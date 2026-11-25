@@ -7,7 +7,18 @@ order: 2
 stack: [".NET 8", "ASP.NET Core", "EF Core", "SQL Server", "Vue 3", "xUnit"]
 repo: "https://github.com/JuanchoVargas/crm-gestion-comercial"
 live: "https://crm.nemedi.com"
-gallery: []
+cover: "../../../assets/projects/crm-gestion-comercial/01-panel.png"
+gallery:
+  - src: "../../../assets/projects/crm-gestion-comercial/02-cotizaciones.png"
+    alt: "List of quotes with their status, total and the order each one produced when approved"
+  - src: "../../../assets/projects/crm-gestion-comercial/03-pedidos.png"
+    alt: "Orders with the delivery route, the status and the linked quote and dispatch documents"
+  - src: "../../../assets/projects/crm-gestion-comercial/04-consulta-precios.png"
+    alt: "Price lookup for a price list: cost, sale price, how it is calculated and a color for the margin"
+  - src: "../../../assets/projects/crm-gestion-comercial/05-inventario-valorizado.png"
+    alt: "Inventory valued at cost, with the total and the share of each brand"
+  - src: "../../../assets/projects/crm-gestion-comercial/06-cartera.png"
+    alt: "Accounts receivable with balances by age and the open documents of each customer"
 highlights:
   - "One installation serves several companies, isolated by 43 global EF Core query filters"
   - "Secure by default: every endpoint requires an authenticated user unless it is explicitly public"

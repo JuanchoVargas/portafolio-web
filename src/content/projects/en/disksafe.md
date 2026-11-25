@@ -6,7 +6,12 @@ status: "Open source · v0.1.0"
 order: 4
 stack: ["PowerShell", "C# (P/Invoke)", "robocopy", "Pester"]
 repo: "https://github.com/JuanchoVargas/disksafe"
-gallery: []
+cover: "../../../assets/projects/disksafe/03-move-clean.png"
+gallery:
+  - src: "../../../assets/projects/disksafe/01-scan.png"
+    alt: "Terminal running disksafe scan: the machine's drives, cleanable and movable findings, and the estimated space per category"
+  - src: "../../../assets/projects/disksafe/02-advise.png"
+    alt: "Terminal running disksafe advise: recommended Windows commands with their estimated gain, none of them executed"
 highlights:
   - "Dry-run by default: nothing is deleted or moved until you pass -Execute"
   - "A folder's source is removed only after every file matches by SHA-256 at the destination"

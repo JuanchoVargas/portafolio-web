@@ -63,7 +63,7 @@ const letter = sheetById('work').letter;
     }
 
     <div class="wrap project__cover">
-      <Shot image={d.cover} alt={d.title} title={d.title} url={d.live} eager />
+      <Shot image={d.cover} alt={d.title} title={d.title} url={d.live} sizes="94vw" eager />
     </div>
 
     <div class="wrap project__body">
@@ -108,8 +108,8 @@ const letter = sheetById('work').letter;
                 <Image
                   src={g.src}
                   alt={g.alt}
-                  widths={[480, 800, 1200]}
-                  sizes="(min-width: 960px) 44vw, 92vw"
+                  widths={[480, 800, 1200, 1600]}
+                  sizes="(min-width: 760px) 48vw, 92vw"
                   loading="lazy"
                 />
                 <figcaption>{g.alt}</figcaption>

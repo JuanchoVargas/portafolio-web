@@ -7,8 +7,18 @@ order: 3
 stack: ["Nuxt 4", "Vue 3", "TypeScript", "WooCommerce", "Mercado Pago", "PostgreSQL", "Vercel"]
 repo: "https://github.com/JuanchoVargas/ecommerce-disfraces"
 live: "https://www.disfraceskustom.com"
-cover: "../../../assets/projects/kustom-disfraces/04-carrito-checkout.png"
-gallery: []
+cover: "../../../assets/projects/kustom-disfraces/01-inicio.png"
+gallery:
+  - src: "../../../assets/projects/kustom-disfraces/02-catalogo.png"
+    alt: "Catálogo de disfraces para niños con filtros por talla, precio y línea"
+  - src: "../../../assets/projects/kustom-disfraces/03-producto.png"
+    alt: "Ficha de un disfraz con precio, selección de talla, guía de tallas y botones de carrito y WhatsApp"
+  - src: "../../../assets/projects/kustom-disfraces/04-carrito-checkout.png"
+    alt: "Carrito con el resumen del pedido y el paso al pago"
+  - src: "../../../assets/projects/kustom-disfraces/05-guia-tallas.png"
+    alt: "Guía de tallas con las tablas de medidas de cada línea de disfraces"
+  - src: "../../../assets/projects/kustom-disfraces/06-celular.png"
+    alt: "La tienda en celular: catálogo, ficha de producto y guía de tallas"
 highlights:
   - "El servidor recalcula cada precio por SKU y rechaza el pago si no coincide"
   - "Una sola orden por pago, aunque la pasarela envíe varias notificaciones a la vez"

@@ -6,7 +6,12 @@ status: "Código abierto · v0.1.0"
 order: 4
 stack: ["PowerShell", "C# (P/Invoke)", "robocopy", "Pester"]
 repo: "https://github.com/JuanchoVargas/disksafe"
-gallery: []
+cover: "../../../assets/projects/disksafe/03-move-clean.png"
+gallery:
+  - src: "../../../assets/projects/disksafe/01-scan.png"
+    alt: "Terminal con disksafe scan: unidades del equipo, hallazgos limpiables y movibles, y el estimado de espacio por categoría"
+  - src: "../../../assets/projects/disksafe/02-advise.png"
+    alt: "Terminal con disksafe advise: comandos de Windows recomendados con su ganancia estimada, sin ejecutar ninguno"
 highlights:
   - "Simulación por defecto: nada se borra ni se mueve hasta pasar -Execute"
   - "El origen de una carpeta solo se borra si todos los archivos coinciden por SHA-256 en el destino"
