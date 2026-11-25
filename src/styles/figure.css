@@ -61,7 +61,7 @@
    deja ver el relleno solo donde está la hoja. */
 .fig__fill--paper-live {
   display: none;
-  clip-path: inset(33% 36% 52% 36%);
+  clip-path: inset(24% 36% 52% 36%);
   background: var(--sheet);
 }
 .fig--paper.is-live .fig__fill--paper {
