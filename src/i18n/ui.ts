@@ -80,7 +80,7 @@ export const ui = {
     credentials: [
       { name: 'Specialization in Information Security', detail: 'Politécnico Grancolombiano · 2026' },
       { name: 'Systems Engineering', detail: 'Politécnico Grancolombiano · Professional license (COPNIA), active' },
-      { name: 'English C1', detail: 'IELTS Academic 7.0 · TOEFL iBT 96/120' },
+      { name: 'English C1', detail: 'IELTS Academic 7.0 · 2026' },
       { name: 'Business innovation in the digital era', detail: 'Universidad del Istmo, Panama · 2023' },
     ],
     stackTitle: 'Tools I work with',
@@ -296,7 +296,7 @@ export const ui = {
     credentials: [
       { name: 'Especialización en Seguridad de la Información', detail: 'Politécnico Grancolombiano · 2026' },
       { name: 'Ingeniería de Sistemas', detail: 'Politécnico Grancolombiano · Matrícula profesional (COPNIA) vigente' },
-      { name: 'Inglés C1', detail: 'IELTS Academic 7.0 · TOEFL iBT 96/120' },
+      { name: 'Inglés C1', detail: 'IELTS Academic 7.0 · 2026' },
       { name: 'Innovación empresarial en la era digital', detail: 'Universidad del Istmo, Panamá · 2023' },
     ],
     stackTitle: 'Herramientas con las que trabajo',
