@@ -115,4 +115,5 @@
   --shadow-sm: 3px 3px 0 var(--spot);
   --shadow-press: 2px 2px 0 var(--spot);
   color: var(--ink);
+  color-scheme: dark;
 }
