@@ -82,21 +82,17 @@
   color: var(--spot-text);
 }
 
-/* Cambio de idioma: una pastilla con el aspecto del botón flotante de contacto
-   (fab.css). Muestra el idioma al que lleva. */
+/* Cambio de idioma: se ve como un enlace más del menú, con su globo, y al
+   pasar el puntero toma el aspecto del botón flotante de contacto (fab.css).
+   Muestra el idioma al que lleva. */
 .lang {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   height: 32px;
   padding: 0 11px 0 8px;
-  border: 2px solid var(--spot-ink);
+  border: 2px solid transparent;
   border-radius: 999px;
-  background: var(--spot);
-  color: var(--spot-ink);
-  box-shadow: 3px 3px 0 var(--ink);
-  font-size: 12px;
-  font-weight: 600;
   line-height: 1;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -105,8 +101,11 @@
     box-shadow 0.15s var(--ease);
 }
 .lang:hover {
+  border-color: var(--spot-ink);
+  background: var(--spot);
+  color: var(--spot-ink);
+  box-shadow: 3px 3px 0 var(--ink);
   translate: -1px -1px;
-  box-shadow: 4px 4px 0 var(--ink);
 }
 .lang:active {
   translate: 2px 2px;
