@@ -157,6 +157,11 @@
     height: 280px;
     margin-top: 76px;
   }
+  /* Los nodos empiezan debajo del globo: en pantallas angostas el globo
+     ocupa casi todo el ancho y taparía los de arriba. */
+  .hero__stage .floaters {
+    top: 76px;
+  }
   .hero__cta .btn {
     flex: 1 1 0;
     text-align: center;
