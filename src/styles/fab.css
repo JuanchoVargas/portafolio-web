@@ -1,0 +1,171 @@
+/* ---------- Botón flotante de contacto ----------
+   Fijo abajo a la derecha, en todas las páginas. Al pulsarlo despliega hacia
+   arriba las formas de escribir. El comportamiento lo pone ContactFab.astro. */
+.fab {
+  zoom: var(--z);
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  z-index: 40; /* sobre la escena, bajo la cabecera */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.fab__button {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  height: 48px;
+  padding: 0 16px 0 13px;
+  border: 2px solid var(--spot-ink);
+  border-radius: 999px;
+  background: var(--spot);
+  color: var(--spot-ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  font: 600 12px/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    translate 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
+}
+.fab__button:hover {
+  translate: -1px -1px;
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.fab__button:active {
+  translate: 2px 2px;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.fab__button:focus-visible,
+.fab__option:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.fab__icon {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.fab__icon--close,
+.fab.is-open .fab__icon--chat {
+  display: none;
+}
+.fab.is-open .fab__icon--close {
+  display: block;
+}
+/* En pantallas angostas queda solo el círculo. */
+@media (max-width: 619px) {
+  .fab__button {
+    width: 48px;
+    padding: 0;
+    justify-content: center;
+  }
+  .fab__text {
+    display: none;
+  }
+}
+
+/* Las opciones: una ficha por canal, con su logo. */
+.fab__menu {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+}
+.fab__menu[hidden] {
+  display: none;
+}
+.fab__option {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 14px 6px 6px;
+  border: var(--line);
+  border-radius: 999px;
+  background: var(--sheet);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  font: 600 13px/1 var(--mono);
+  white-space: nowrap;
+}
+a.fab__option:hover {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+.fab__option--off {
+  border-style: dashed;
+  color: var(--muted);
+  box-shadow: none;
+}
+.fab__pending {
+  padding: 2px 6px;
+  border: var(--hair);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* El logo va en su color de marca sobre una ficha clara que no cambia con el
+   tema, como las tecnologías. */
+.fab__logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #fffdf7;
+  color: var(--brand, #15130f);
+  font: 700 15px/1 var(--body);
+}
+.fab__logo svg {
+  width: 19px;
+  height: 19px;
+  fill: currentColor;
+}
+.fab__logo .fab__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .fab__menu:not([hidden]) li {
+    animation: fab-in 0.22s var(--ease) both;
+  }
+  .fab__menu li:nth-last-child(2) {
+    animation-delay: 0.04s;
+  }
+  .fab__menu li:nth-last-child(3) {
+    animation-delay: 0.08s;
+  }
+}
+@keyframes fab-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fab__button {
+    transition: none;
+  }
+}
+
+/* En la escena fija el rótulo del personaje ocupa esa esquina en las hojas
+   que lo tienen a la derecha: el botón sube para no taparlo. En la hoja de
+   contacto sobra: ya está el formulario. La condición es la de home.css. */
+@media (min-width: 1000px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  .js:has([data-scene]) .fab {
+    bottom: calc(58px + env(safe-area-inset-bottom));
+  }
+  .js:has(#contact.is-on) .fab {
+    display: none;
+  }
+}

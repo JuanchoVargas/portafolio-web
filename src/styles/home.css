@@ -466,6 +466,45 @@
   max-width: 62ch;
   font-size: 15px;
 }
+/* La trayectoria: una línea de tiempo a lápiz. */
+.xp {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+  padding-left: 16px;
+  border-left: var(--pencil-line);
+}
+.xp li {
+  position: relative;
+}
+.xp li::before {
+  content: '';
+  position: absolute;
+  left: -22px;
+  top: 4px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--spot);
+}
+.xp__when {
+  color: var(--spot-text);
+}
+.xp h3 {
+  margin-top: 2px;
+  font-size: 19px;
+  line-height: 1.05;
+}
+.about__text .xp p {
+  max-width: 58ch;
+  margin-top: 3px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.about__text .xp .xp__where {
+  color: var(--muted);
+  font: 500 12px/1.3 var(--mono);
+}
 .about__text p + p {
   margin-top: 12px;
 }
@@ -720,14 +759,17 @@
     z-index: 1;
     zoom: var(--z);
   }
-  /* Los nodos flotan en la franja del personaje, por detrás de él. */
+  /* Los nodos flotan por detrás del personaje, en una franja centrada en él:
+     su mismo ancho más un margen a cada lado, sin importar cuánto borde deje
+     la pantalla. */
   .js .sheet__floaters {
+    --float-pad: min(40px, var(--edge));
     display: block;
-    inset: 0 auto 0 0;
-    width: calc(var(--edge) + var(--actor-w) + 52px);
+    inset: 0 auto 0 calc(var(--edge) - var(--float-pad));
+    width: calc(var(--actor-w) + 2 * var(--float-pad));
   }
   .js .sheet[data-side='right'] .sheet__floaters {
-    inset: 0 0 0 auto;
+    inset: 0 calc(var(--edge) - var(--float-pad)) 0 auto;
   }
   /* Con espacio a los lados, el sello de las demos sobresale del marco. */
   .js .demo__stamp {

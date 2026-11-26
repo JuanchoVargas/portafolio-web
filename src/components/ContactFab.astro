@@ -1,0 +1,154 @@
+---
+// Botón flotante de contacto: al pulsarlo despliega las formas de escribir
+// (WhatsApp, correo y LinkedIn). Los destinos salen de src/data/site.ts; una
+// opción sin dato no se publica. En desarrollo sí se muestra, marcada como
+// pendiente y sin enlace, para ver cómo queda.
+import { siWhatsapp } from 'simple-icons';
+import { contactFab } from '../i18n/contact-fab';
+import type { Lang } from '../i18n/ui';
+import { site } from '../data/site';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = contactFab[lang];
+
+// El número va en formato internacional, solo dígitos.
+const phone = site.whatsapp.replace(/\D/g, '');
+const options = [
+  {
+    id: 'whatsapp',
+    label: t.whatsapp,
+    brand: `#${siWhatsapp.hex}`,
+    href: phone && `https://wa.me/${phone}?text=${encodeURIComponent(t.greeting)}`,
+    external: true,
+  },
+  {
+    id: 'email',
+    label: t.email,
+    brand: undefined,
+    href: site.email && `mailto:${site.email}?subject=${encodeURIComponent(t.subject)}`,
+    external: false,
+  },
+  {
+    id: 'linkedin',
+    label: t.linkedin,
+    brand: '#0A66C2',
+    href: site.linkedin,
+    external: true,
+  },
+].filter((option) => option.href || import.meta.env.DEV);
+---
+
+{
+  options.length > 0 && (
+    <div class="fab" data-fab>
+      <ul class="fab__menu" id="fab-menu" aria-label={t.menu} hidden>
+        {options.map((option) => {
+          const inner = (
+            <>
+              <span class="fab__logo" style={option.brand ? `--brand:${option.brand}` : undefined} aria-hidden="true">
+                {option.id === 'whatsapp' && (
+                  <svg viewBox="0 0 24 24">
+                    <path d={siWhatsapp.path} />
+                  </svg>
+                )}
+                {option.id === 'email' && (
+                  <svg viewBox="0 0 24 24" class="fab__line">
+                    <rect x="3" y="5.5" width="18" height="13" rx="1.5" />
+                    <path d="m3.5 7 8.5 6.5L20.5 7" />
+                  </svg>
+                )}
+                {option.id === 'linkedin' && <b>in</b>}
+              </span>
+              <span>{option.label}</span>
+              {!option.href && <span class="fab__pending">{t.pending}</span>}
+            </>
+          );
+          return (
+            <li>
+              {option.href ? (
+                <a
+                  class="fab__option"
+                  href={option.href}
+                  target={option.external ? '_blank' : undefined}
+                  rel={option.external ? 'noopener' : undefined}
+                >
+                  {inner}
+                </a>
+              ) : (
+                <span class="fab__option fab__option--off">{inner}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <button
+        class="fab__button"
+        type="button"
+        aria-expanded="false"
+        aria-controls="fab-menu"
+        data-open={t.open}
+        data-close={t.close}
+        aria-label={t.open}
+      >
+        <svg class="fab__icon fab__icon--chat" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 5.5h16v11h-9.5L6 20v-3.5H4z" />
+          <path d="M8 9.5h8M8 12.5h5" />
+        </svg>
+        <svg class="fab__icon fab__icon--close" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m6 6 12 12M18 6 6 18" />
+        </svg>
+        <span class="fab__text" aria-hidden="true">{t.open}</span>
+      </button>
+    </div>
+  )
+}
+
+<script>
+  let stop: AbortController | undefined;
+
+  function init() {
+    stop?.abort();
+    const root = document.querySelector<HTMLElement>('[data-fab]');
+    if (!root) return;
+    stop = new AbortController();
+    const { signal } = stop;
+
+    const button = root.querySelector<HTMLButtonElement>('.fab__button')!;
+    const menu = root.querySelector<HTMLElement>('.fab__menu')!;
+
+    function set(open: boolean) {
+      menu.hidden = !open;
+      root!.classList.toggle('is-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      button.setAttribute('aria-label', open ? button.dataset.close! : button.dataset.open!);
+    }
+    const isOpen = () => !menu.hidden;
+
+    button.addEventListener('click', () => set(!isOpen()), { signal });
+    // Se cierra al elegir, al pulsar fuera y con Escape.
+    menu.addEventListener('click', (e) => (e.target as Element).closest('a') && set(false), { signal });
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (isOpen() && !root.contains(e.target as Node)) set(false);
+      },
+      { signal },
+    );
+    document.addEventListener(
+      'keydown',
+      (e) => {
+        if (e.key !== 'Escape' || !isOpen()) return;
+        set(false);
+        button.focus();
+      },
+      { signal },
+    );
+    signal.addEventListener('abort', () => set(false));
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => stop?.abort());
+</script>

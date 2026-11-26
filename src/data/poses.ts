@@ -31,7 +31,7 @@ export const poses = {
   walk: { image: walk, clip: walkClip, box: 'left:18.14%;top:4.23%;width:67.46%;height:92.63%' },
   desk: { image: desk, clip: deskClip, box: 'left:18.57%;top:4.4%;width:64.38%;height:94.15%' },
   arms: { image: arms, clip: armsClip, box: 'left:29.93%;top:4.9%;width:40.49%;height:92.44%' },
-  paper: { image: paper, clip: paperClip, box: 'left:25.64%;top:4.92%;width:49.2%;height:92.75%' },
+  paper: { image: paper, clip: paperClip, box: 'left:27.95%;top:4.92%;width:45.27%;height:92.66%' },
   architect: {
     image: architect,
     clip: architectClip,

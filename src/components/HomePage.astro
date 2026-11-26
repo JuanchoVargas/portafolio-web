@@ -87,7 +87,59 @@ const work = sheetById('work');
   </section>
 
   <Scene lang={lang} labels={labels}>
-    <Sheet id="work" lang={lang} eyebrow={labels.work} title={t.workTitle} first>
+    <Sheet id="about" lang={lang} eyebrow={labels.about} title={t.aboutTitle} first>
+      <div class="about">
+        <div class="about__text">
+          {t.about.map((p) => <p>{p}</p>)}
+          <ol class="xp">
+            {
+              t.experience.map((x) => (
+                <li>
+                  <p class="mono xp__when">{x.when}</p>
+                  <h3>{x.role}</h3>
+                  <p class="xp__where">{x.where}</p>
+                  <p>{x.text}</p>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+        <div>
+          <h3 class="label">{t.credentialsTitle}</h3>
+          <ul class="creds">
+            {
+              t.credentials.map((c) => (
+                <li>
+                  <strong>{c.name}</strong>
+                  <span>{c.detail}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <h3 class="label">{t.stackTitle}</h3>
+          <ul class="chips">
+            {
+              stack.map((id) => (
+                <li class="chips__tech" style={`--brand:#${tech[id].hex}`}>
+                  <span class="chips__logo" aria-hidden="true">
+                    {tech[id].icon ? (
+                      <svg viewBox="0 0 24 24">
+                        <path d={tech[id].icon} />
+                      </svg>
+                    ) : (
+                      tech[id].text
+                    )}
+                  </span>
+                  {tech[id].name}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </Sheet>
+
+    <Sheet id="work" lang={lang} eyebrow={labels.work} title={t.workTitle}>
       <div class="work">
         <div class="board" style={`--cols:${cols};--rows:${rows}`}>
           {
@@ -115,7 +167,6 @@ const work = sheetById('work');
 
     <Sheet id="security" dark lang={lang} eyebrow={labels.security} title={t.securityTitle}>
       <DemoRoles client:visible t={t.demoRoles} stamp={t.fictional} />
-      <p class="note hand sheet__note">{t.noteRoles}</p>
     </Sheet>
 
     <Sheet id="services" lang={lang} eyebrow={labels.services} title={t.servicesTitle}>
@@ -169,46 +220,6 @@ const work = sheetById('work');
               <span>{t.reviewChecks[1]}</span>
               <span class="check__state">{t.reviewOk}</span>
             </li>
-          </ul>
-        </div>
-      </div>
-    </Sheet>
-
-    <Sheet id="about" lang={lang} eyebrow={labels.about} title={t.aboutTitle}>
-      <div class="about">
-        <div class="about__text">
-          {t.about.map((p) => <p>{p}</p>)}
-        </div>
-        <div>
-          <h3 class="label">{t.credentialsTitle}</h3>
-          <ul class="creds">
-            {
-              t.credentials.map((c) => (
-                <li>
-                  <strong>{c.name}</strong>
-                  <span>{c.detail}</span>
-                </li>
-              ))
-            }
-          </ul>
-          <h3 class="label">{t.stackTitle}</h3>
-          <ul class="chips">
-            {
-              stack.map((id) => (
-                <li class="chips__tech" style={`--brand:#${tech[id].hex}`}>
-                  <span class="chips__logo" aria-hidden="true">
-                    {tech[id].icon ? (
-                      <svg viewBox="0 0 24 24">
-                        <path d={tech[id].icon} />
-                      </svg>
-                    ) : (
-                      tech[id].text
-                    )}
-                  </span>
-                  {tech[id].name}
-                </li>
-              ))
-            }
           </ul>
         </div>
       </div>

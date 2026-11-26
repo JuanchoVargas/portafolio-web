@@ -13,11 +13,11 @@ interface SheetDef {
 }
 
 const defs: SheetDef[] = [
+  { id: 'about', pose: 'arms' },
   { id: 'work', pose: 'architect' },
   { id: 'demo', pose: 'desk' },
   { id: 'security', pose: 'shield', altPose: 'keys' },
   { id: 'services', pose: 'build' },
-  { id: 'about', pose: 'arms' },
   { id: 'contact', pose: 'paper' },
 ];
 

@@ -121,8 +121,43 @@
   cursor: pointer;
   transition: background 0.3s;
 }
+/* Dentro, una tecla: así se lee como botón antes de pasar el puntero. */
+.demo__key {
+  display: inline-grid;
+  place-items: center;
+  min-width: 34px;
+  padding: 1px 8px;
+  border: var(--hair);
+  border-radius: var(--radius);
+  transition:
+    background 0.2s,
+    translate 0.2s;
+}
 .demo__cell[data-ok='false'] {
   color: var(--faint);
+}
+.demo__cell[data-ok='false'] .demo__key {
+  border-style: dashed;
+}
+.demo__cell:hover .demo__key,
+.demo__cell:focus-visible .demo__key {
+  background: var(--spot);
+  border-color: var(--spot);
+  border-style: solid;
+  color: var(--spot-ink);
+  translate: 0 -1px;
+}
+/* El guiño en una casilla va por dentro: la tabla recorta lo que sobresale. */
+.demo__cell.is-hint {
+  outline: 0;
+  animation: none;
+}
+.demo__cell.is-hint .demo__key {
+  border-color: var(--spot);
+  border-style: solid;
+  color: var(--spot-text);
+  outline: 2px solid var(--spot);
+  outline-offset: 1px;
 }
 .demo__cell.is-flash {
   background: var(--spot-flash);
@@ -380,6 +415,9 @@
   .is-hint {
     animation: lab-hint 1.7s ease-in-out infinite;
   }
+  .demo__cell.is-hint .demo__key {
+    animation: lab-hint-key 1.7s ease-in-out infinite;
+  }
   /* Misión completa: el marco destella una vez. */
   .lab__panel.is-cheer > .demo {
     animation: lab-cheer 1.1s var(--ease);
@@ -393,6 +431,17 @@
   }
   50% {
     outline-offset: 6px;
+    outline-color: transparent;
+  }
+}
+@keyframes lab-hint-key {
+  0%,
+  100% {
+    outline-offset: 1px;
+    outline-color: var(--spot);
+  }
+  50% {
+    outline-offset: 4px;
     outline-color: transparent;
   }
 }
