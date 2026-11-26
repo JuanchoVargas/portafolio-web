@@ -23,7 +23,7 @@ try {
 } finally { Pop-Location }
 
 # El código, a GitHub.
-git -C $PSScriptRoot push
+git -C $PSScriptRoot push --set-upstream origin HEAD
 if ($LASTEXITCODE -ne 0) { throw 'El push del código a GitHub falló: no se publica nada.' }
 
 # Espejo de dist en el repositorio de despliegue, sin tocar su carpeta .git.
