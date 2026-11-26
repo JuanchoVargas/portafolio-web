@@ -24,14 +24,25 @@ const other = switchLangPath(Astro.url.pathname, lang);
       <a href={`${home}#services`}>{t.navServices}</a>
       <a href={`${home}#contact`}>{t.navContact}</a>
     </nav>
-    <a
-      class="chip site-header__lang"
-      href={other}
-      hreflang={lang === 'en' ? 'es' : 'en'}
-      aria-label={t.otherLangLabel}
-    >
-      {t.otherLang}
-    </a>
+    <div class="lang mono site-header__lang" role="group" aria-label={t.langLabel}>
+      <svg class="lang__globe" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"></circle>
+        <path d="M3 12h18M12 3c2.6 2.8 3.9 5.8 3.9 9s-1.3 6.2-3.9 9c-2.6-2.8-3.9-5.8-3.9-9S9.400 5.800 12 3z"></path>
+      </svg>
+      {
+        (['es', 'en'] as const).map((code) =>
+          code === lang ? (
+            <span class="lang__opt is-on" aria-current="true">
+              {code.toUpperCase()}
+            </span>
+          ) : (
+            <a class="lang__opt" href={other} hreflang={code} lang={code} aria-label={t.otherLangLabel}>
+              {code.toUpperCase()}
+            </a>
+          ),
+        )
+      }
+    </div>
     <dl class="titleblock">
       <div>
         <dt>{t.tbProject}</dt>

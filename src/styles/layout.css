@@ -81,3 +81,44 @@
 .site-footer a:hover {
   color: var(--spot-text);
 }
+
+/* Cambio de idioma: los dos a la vista, el actual resaltado. */
+.lang {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: var(--line);
+  border-radius: 999px;
+  background: var(--sheet);
+  box-shadow: var(--shadow-sm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.lang__globe {
+  width: 18px;
+  height: 18px;
+  margin-inline: 5px 3px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+}
+.lang__opt {
+  min-width: 34px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  text-align: center;
+  line-height: 1;
+}
+.lang__opt.is-on {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+a.lang__opt {
+  color: var(--muted);
+}
+a.lang__opt:hover {
+  background: var(--spot-soft);
+  color: var(--ink);
+}
