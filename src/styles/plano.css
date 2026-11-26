@@ -224,9 +224,10 @@
   background: var(--sheet);
   rotate: 45deg;
 }
+/* La cola lateral va a media altura del globo, tenga una línea o tres. */
 .balloon--side::after {
   left: -10px;
-  bottom: 14px;
+  bottom: calc(50% - 8px);
   rotate: 135deg;
 }
 

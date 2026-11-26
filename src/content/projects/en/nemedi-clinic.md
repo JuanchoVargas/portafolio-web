@@ -18,10 +18,10 @@ gallery:
   - src: "../../../assets/projects/nemedi-clinic/07-inventario-alertas.png"
     alt: "Inventory alerts listing expired batches and batches close to their expiry date"
 highlights:
-  - "Tenant isolation enforced by a global EF Core filter and proven by an end-to-end test with two clinics"
-  - "Clinical photos served only through HMAC-signed URLs that expire after 10 minutes"
-  - "Every authenticated request re-checks the account, its role and the clinic's status"
-  - "Batch inventory with first-expired-first-out picking and a regulatory traceability report"
+  - "Each clinic’s data isolated, proven by an end-to-end test"
+  - "Clinical photos only through signed links that expire in 10 minutes"
+  - "Every request re-checks the account, the role and the clinic"
+  - "Batch inventory: what expires first leaves first"
 metrics:
   - value: "313"
     label: "automated tests"
@@ -33,17 +33,26 @@ metrics:
 
 ## The problem
 
-An aesthetic clinic in Colombia usually runs on a paper appointment book, a spreadsheet for stock and a notebook for cash. Patient records hold health data and before-and-after photos, so a shared system has to keep each clinic's data strictly apart from everyone else's.
+An aesthetic clinic usually runs on a paper appointment book, a spreadsheet for stock and a notebook for cash. Patient records hold health data and photos, so a shared system has to keep each clinic's data apart.
 
 ## What I built
 
-A web application where each clinic is a tenant with its own branches and three roles: owner, front desk and aesthetician. It covers patient records with bulk import from Excel or CSV, clinical history with photo comparison, informed consent signed on screen, scheduling, session packages, batch inventory with expiry alerts, sales with per-line VAT and split payments, and a cash drawer per user and branch. A platform level above the clinics manages accounts and white-label sales channels.
+A web application where each clinic is a tenant with its own branches and three roles: owner, front desk and aesthetician.
 
-The backend is a layered ASP.NET Core API on SQL Server. The frontend is a React SPA that works on a phone and installs as a PWA.
+- Patient records, clinical history with photo comparison and consent signed on screen.
+- Scheduling and session packages.
+- Batch inventory with expiry alerts.
+- Sales with per-line VAT and a cash drawer per user and branch.
+
+An ASP.NET Core API on SQL Server and a React SPA that works on a phone and installs as a PWA. A platform level manages the clinics and white-label sales channels.
 
 ## Security
 
-The tenant travels in the JWT and a global query filter applies it, together with soft delete, to every query. The tenant ID is set on save and never read from the request body. Roles are enforced on the server. Passwords are hashed with BCrypt, login attempts are rate limited per IP and per account, and third-party billing credentials are stored encrypted with AES-GCM. Uploaded images are validated by content and stripped of EXIF, IPTC and XMP metadata. In production the API refuses to start with a weak signing key or wildcard CORS.
+- The tenant travels in the JWT and a global query filter applies it to every query; it is never read from the request.
+- Roles are enforced on the server.
+- Passwords hashed with BCrypt, login attempts limited per IP and per account, and billing credentials encrypted with AES-GCM.
+- Uploaded images are validated by content and stripped of metadata.
+- In production the API refuses to start with a weak signing key or wildcard CORS.
 
 ## Result
 

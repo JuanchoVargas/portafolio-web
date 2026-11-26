@@ -1,0 +1,117 @@
+/* ---------- Visor de imágenes ----------
+   Una captura a pantalla completa sobre fondo oscuro. El marcado y el
+   comportamiento están en Lightbox.astro. */
+a[data-zoom] {
+  display: block;
+  cursor: zoom-in;
+}
+a[data-zoom]:focus-visible {
+  outline-offset: -3px;
+}
+html:has(.lightbox[open]) {
+  overflow: hidden;
+}
+.lightbox {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: rgba(8, 10, 14, 0.96);
+  color: var(--ink);
+}
+.lightbox[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+}
+.lightbox::backdrop {
+  background: rgba(8, 10, 14, 0.96);
+}
+.lightbox__bar,
+.lightbox__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px max(12px, env(safe-area-inset-right)) 10px max(12px, env(safe-area-inset-left));
+}
+.lightbox__foot {
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+.lightbox__count {
+  color: var(--muted);
+}
+.lightbox__btn {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: var(--line);
+  border-radius: 50%;
+  background: var(--sheet);
+  color: var(--ink);
+  font: 600 18px/1 var(--mono);
+  cursor: pointer;
+}
+.lightbox__btn:hover {
+  background: var(--spot);
+  color: var(--spot-ink);
+}
+/* Con una sola imagen las flechas no se ven, pero guardan su sitio. */
+.lightbox__btn[hidden] {
+  display: grid;
+  visibility: hidden;
+}
+/* La imagen cabe entera; ampliada, se recorre con el dedo o el ratón. */
+.lightbox__stage {
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-inline: 8px;
+}
+.lightbox__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+}
+.lightbox__stage.is-zoomed {
+  display: block;
+}
+.lightbox__stage.is-zoomed .lightbox__img {
+  width: max(220%, 1200px);
+  max-width: none;
+  height: auto;
+  cursor: zoom-out;
+}
+.lightbox__cap {
+  flex: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.35;
+}
+.lightbox__hint {
+  color: var(--muted);
+  font: 500 11px/1.3 var(--mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox[open] {
+    animation: lightbox-in 0.18s var(--ease);
+  }
+}
+@keyframes lightbox-in {
+  from {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,151 @@
+---
+// Visor de imágenes. Cualquier enlace con `data-zoom` abre aquí la imagen a la
+// que apunta, con su `data-caption` como pie; los de una misma página forman
+// una galería que se recorre con las flechas o deslizando. Sin scripts, el
+// enlace abre la imagen directamente. Esos enlaces llevan `data-astro-reload`
+// para que el enrutador de páginas no intente navegar hacia la imagen.
+import { links } from '../i18n/links';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = links[lang];
+---
+
+<dialog class="lightbox" data-lightbox aria-label={t.viewer}>
+  <div class="lightbox__bar">
+    <span class="mono lightbox__count" data-count aria-live="polite"></span>
+    <button class="lightbox__btn" type="button" data-close aria-label={t.close}>✕</button>
+  </div>
+  <div class="lightbox__stage" data-stage>
+    <img class="lightbox__img" data-img alt="" />
+  </div>
+  <div class="lightbox__foot">
+    <button class="lightbox__btn" type="button" data-prev aria-label={t.prev}>←</button>
+    <p class="lightbox__cap">
+      <span data-caption></span>
+      <span class="lightbox__hint">{t.hint}</span>
+    </p>
+    <button class="lightbox__btn" type="button" data-next aria-label={t.next}>→</button>
+  </div>
+</dialog>
+
+<script>
+  let stop: AbortController | undefined;
+
+  function init() {
+    stop?.abort();
+    const dialog = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+    if (!dialog || typeof dialog.showModal !== 'function') return;
+    stop = new AbortController();
+    const { signal } = stop;
+
+    const img = dialog.querySelector<HTMLImageElement>('[data-img]')!;
+    const stage = dialog.querySelector<HTMLElement>('[data-stage]')!;
+    const caption = dialog.querySelector<HTMLElement>('[data-caption]')!;
+    const count = dialog.querySelector<HTMLElement>('[data-count]')!;
+    const prev = dialog.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = dialog.querySelector<HTMLButtonElement>('[data-next]')!;
+
+    let items: HTMLAnchorElement[] = [];
+    let at = 0;
+
+    function show(i: number) {
+      at = (i + items.length) % items.length;
+      const item = items[at];
+      stage.classList.remove('is-zoomed');
+      img.src = item.href;
+      img.alt = item.dataset.caption ?? '';
+      caption.textContent = item.dataset.caption ?? '';
+      count.textContent = items.length > 1 ? `${at + 1} / ${items.length}` : '';
+      prev.hidden = next.hidden = items.length < 2;
+    }
+
+    // ¿El clic cayó sobre el dibujo y no sobre el aire que deja al ajustarse?
+    function onPicture(e: MouseEvent) {
+      const box = img.getBoundingClientRect();
+      const scale = Math.min(box.width / img.naturalWidth, box.height / img.naturalHeight);
+      if (!Number.isFinite(scale)) return true;
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      const x = e.clientX - (box.left + (box.width - w) / 2);
+      const y = e.clientY - (box.top + (box.height - h) / 2);
+      return x >= 0 && x <= w && y >= 0 && y <= h;
+    }
+
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const link = e.target instanceof Element ? e.target.closest<HTMLAnchorElement>('a[data-zoom]') : null;
+        if (!link) return;
+        e.preventDefault();
+        // Solo las que están a la vista: las de un bloque oculto no cuentan.
+        items = [...document.querySelectorAll<HTMLAnchorElement>('a[data-zoom]')].filter(
+          (a) => a.offsetParent !== null,
+        );
+        show(Math.max(0, items.indexOf(link)));
+        dialog.showModal();
+      },
+      { signal },
+    );
+
+    dialog.addEventListener(
+      'click',
+      (e) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-close]') || target === dialog || target === stage) dialog.close();
+        else if (target.closest('[data-prev]')) show(at - 1);
+        else if (target.closest('[data-next]')) show(at + 1);
+        // Un toque en la imagen la amplía; otro la devuelve a su tamaño. La
+        // caja de la imagen llena el visor: fuera del dibujo, el toque cierra.
+        else if (target === img) {
+          if (stage.classList.contains('is-zoomed') || onPicture(e)) stage.classList.toggle('is-zoomed');
+          else dialog.close();
+        }
+      },
+      { signal },
+    );
+
+    dialog.addEventListener(
+      'keydown',
+      (e) => {
+        if (items.length < 2) return;
+        if (e.key === 'ArrowLeft') show(at - 1);
+        if (e.key === 'ArrowRight') show(at + 1);
+      },
+      { signal },
+    );
+
+    // Deslizar de lado pasa de imagen, salvo que esté ampliada (ahí se desplaza).
+    let startX = 0;
+    let startY = 0;
+    stage.addEventListener(
+      'touchstart',
+      (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+      },
+      { passive: true, signal },
+    );
+    stage.addEventListener(
+      'touchend',
+      (e) => {
+        if (items.length < 2 || stage.classList.contains('is-zoomed')) return;
+        if ((window.visualViewport?.scale ?? 1) > 1.05) return;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+        if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.5) show(dx < 0 ? at + 1 : at - 1);
+      },
+      { passive: true, signal },
+    );
+
+    dialog.addEventListener('close', () => img.removeAttribute('src'), { signal });
+    signal.addEventListener('abort', () => dialog.open && dialog.close());
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => stop?.abort());
+</script>

@@ -13,10 +13,10 @@ gallery:
   - src: "../../../assets/projects/disksafe/02-advise.png"
     alt: "Terminal con disksafe advise: comandos de Windows recomendados con su ganancia estimada, sin ejecutar ninguno"
 highlights:
-  - "Simulación por defecto: nada se borra ni se mueve hasta pasar -Execute"
-  - "El origen de una carpeta solo se borra si todos los archivos coinciden por SHA-256 en el destino"
-  - "Un único punto del código puede borrar y uno puede mover, y un test estático por AST lo hace cumplir"
-  - "Falla cerrado: una ruta que no se puede resolver se trata como protegida"
+  - "Simulación por defecto: nada cambia hasta pasar -Execute"
+  - "El origen solo se borra si todo coincide por SHA-256 en el destino"
+  - "Un punto del código borra y otro mueve; un test lo hace cumplir"
+  - "Falla cerrado: una ruta que no se resuelve se trata como protegida"
 metrics:
   - value: "677"
     label: "tests que pasan"
@@ -28,19 +28,26 @@ metrics:
 
 ## El problema
 
-Cuando el disco del sistema se llena, lo habitual es correr un script de limpieza copiado de un foro o borrar carpetas a mano. Las dos cosas pueden dañar Windows o hacer perder trabajo. Quería una herramienta para quien administra su propio equipo, que muestre exactamente qué va a tocar antes de tocarlo.
+Cuando el disco del sistema se llena, lo habitual es correr un script de limpieza copiado de un foro o borrar carpetas a mano. Las dos cosas pueden dañar Windows o hacer perder trabajo. Quería una herramienta que muestre exactamente qué va a tocar antes de tocarlo.
 
 ## Lo que construí
 
-Un módulo de PowerShell con cuatro comandos. `scan` mide qué ocupa espacio y clasifica cada hallazgo como limpiable seguro, movible, movible con procedimiento o no tocar. `advise` imprime los comandos nativos de Windows que conviene ejecutar y su ganancia estimada, sin ejecutarlos. `clean` borra temporales antiguos del usuario y cachés de navegadores, npm, pip y NuGet. `move` lleva repositorios y carpetas de datos a otra partición y deja una bitácora para deshacer la operación.
+Un módulo de PowerShell con cuatro comandos, para Windows PowerShell 5.1 y PowerShell 7, sin dependencias externas.
 
-Funciona en Windows PowerShell 5.1 y PowerShell 7, sin dependencias externas.
+- `scan` mide qué ocupa espacio y clasifica cada hallazgo: limpiable seguro, movible, movible con procedimiento o no tocar.
+- `advise` imprime los comandos de Windows que conviene ejecutar y su ganancia estimada, sin ejecutarlos.
+- `clean` borra temporales antiguos del usuario y cachés de navegadores, npm, pip y NuGet.
+- `move` lleva repositorios y carpetas de datos a otra partición y deja una bitácora para deshacer la operación.
 
 ## Seguridad por diseño
 
-Una herramienta que borra archivos debe fallar hacia el lado seguro. Las rutas protegidas viven en un solo archivo, y la validación resuelve la ruta real a través de junctions, symlinks, nombres cortos y `..`, y se repite justo antes de actuar. Nunca se siguen enlaces. La copia no usa opciones destructivas de robocopy. Cada operación escribe su intención antes de actuar y el resultado por elemento después. La herramienta no se eleva sola: indica qué comando necesita permisos de administrador.
+Una herramienta que borra archivos debe fallar hacia el lado seguro.
 
-Un test analiza todo el código fuente y falla si aparece un comando que modifique el sistema fuera de los archivos permitidos.
+- Las rutas protegidas viven en un solo archivo, y la ruta real se resuelve y se vuelve a validar justo antes de actuar.
+- Nunca se siguen enlaces, y la copia no usa opciones destructivas de robocopy.
+- Cada operación escribe su intención antes de actuar y el resultado por elemento después.
+- No se eleva sola: indica qué comando necesita permisos de administrador.
+- Un test analiza todo el código fuente y falla si algo modifica el sistema fuera de los archivos permitidos.
 
 ## Estado
 

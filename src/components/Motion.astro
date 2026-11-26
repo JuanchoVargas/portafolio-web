@@ -1,0 +1,172 @@
+---
+// Movimiento al bajar por la página. Marca las piezas que entran animadas y
+// les avisa cuando llegan a la pantalla; el aspecto de cada entrada está en
+// motion.css. No cambia el contenido: si este script no corre, todo se ve.
+---
+
+<div class="mo-progress" aria-hidden="true"></div>
+
+<script>
+  // Cuándo la escena de la portada queda fija. La misma condición está en
+  // Scene.astro y en home.css: ahí manda la escena y aquí no se marca nada.
+  const PINNED = '(min-width: 1000px) and (min-height: 700px) and (prefers-reduced-motion: no-preference)';
+
+  // Qué piezas entran animadas y cómo. `side` se resuelve con el lado de la hoja.
+  const HOME: [string, string][] = [
+    ['.facts > div', 'rise'],
+    ['.sheet__fig > .fig', 'side'],
+    ['.sheet__fig > .balloon', 'pop'],
+    ['.sheet__role', 'rise'],
+    ['.sheet__in > .eyebrow', 'rise'],
+    ['.sheet__title', 'title'],
+    ['.pcut', 'drop'],
+    ['.review', 'drop'],
+    ['.work .note', 'rise'],
+    ['.show__card', 'slide'],
+    ['.show__swipe', 'rise'],
+    ['.show__cta', 'rise'],
+    ['.show__desktop', 'rise'],
+    ['.guards > li', 'rise'],
+    ['.sheet__body > .not-phone', 'rise'],
+    ['.list > li', 'rise'],
+    ['.about__text > p', 'rise'],
+    ['.xp > li', 'rise'],
+    ['.creds > li', 'rise'],
+    ['.about .label', 'rise'],
+    ['.chips > li', 'chip'],
+    ['.contact__lead', 'rise'],
+    ['.contact__alt', 'rise'],
+    ['.contact__cta', 'rise'],
+    ['.form', 'rise'],
+  ];
+  const PROJECT: [string, string][] = [
+    ['.metrics > div', 'rise'],
+    ['.prose > *', 'rise'],
+    ['.project__side .label', 'rise'],
+    ['.project__side .chips > li', 'chip'],
+    ['.project__side .points > li', 'rise'],
+    ['.project__fact', 'rise'],
+    ['.project__gallery > .eyebrow', 'rise'],
+    ['.gallery__item', 'rise'],
+    ['.next', 'rise'],
+  ];
+  // Cifras que cuentan hasta su valor al aparecer.
+  const COUNTERS = '.facts dd, .metrics dd';
+
+  let stop: AbortController | undefined;
+
+  function init() {
+    stop?.abort();
+    const root = document.documentElement;
+    const still = matchMedia('(prefers-reduced-motion: reduce)');
+    if (still.matches || !('IntersectionObserver' in window)) {
+      root.classList.remove('motion');
+      return;
+    }
+    stop = new AbortController();
+    const { signal } = stop;
+    root.classList.add('motion');
+
+    const pinned = matchMedia(PINNED);
+    const scene = document.querySelector('[data-scene]');
+    // Con la escena fija, la portada y sus hojas son asunto de la escena.
+    const rules = scene ? (pinned.matches && root.classList.contains('js') ? [] : HOME) : PROJECT;
+
+    const marked: HTMLElement[] = [];
+    const counting = new Map<HTMLElement, string>();
+    const fold = window.innerHeight;
+
+    for (const [selector, kind] of rules) {
+      for (const el of document.querySelectorAll<HTMLElement>(selector)) {
+        // Lo que dibuja una isla lo maneja su propio código.
+        if (el.dataset.mo || el.closest('astro-island')) continue;
+        // Lo que ya está a la vista al cargar se queda como está: sin parpadeo.
+        const box = el.getBoundingClientRect();
+        if (box.top < fold && box.bottom > 0) continue;
+        if (box.width === 0 && box.height === 0) continue;
+        const side = el.closest<HTMLElement>('[data-side]')?.dataset.side === 'right' ? 'side-right' : 'side-left';
+        el.dataset.mo = kind === 'side' ? side : kind;
+        marked.push(el);
+      }
+    }
+
+    // Cuenta de 0 al valor escrito, conservando lo que lo acompaña ("660+").
+    function count(el: HTMLElement) {
+      const text = el.textContent ?? '';
+      const match = text.trim().match(/^(\d{1,6})(\D{0,3})$/);
+      if (!match || Number(match[1]) < 2) return;
+      const target = Number(match[1]);
+      const suffix = match[2];
+      counting.set(el, text);
+      const start = performance.now();
+      const step = (now: number) => {
+        if (signal.aborted) return;
+        const p = Math.min(1, (now - start) / 900);
+        const eased = 1 - Math.pow(1 - p, 3);
+        if (p < 1) {
+          el.textContent = `${Math.round(target * eased)}${suffix}`;
+          requestAnimationFrame(step);
+        } else {
+          el.textContent = text;
+          counting.delete(el);
+        }
+      };
+      requestAnimationFrame(step);
+    }
+
+    // Escena fija de escritorio: cada hoja anima sus piezas al activarse
+    // (motion.css). Aquí solo se numeran para escalonarlas y cuentan las cifras
+    // de la portada.
+    if (scene && rules.length === 0) {
+      for (const group of document.querySelectorAll('.board, .list, .xp, .creds, .chips, .review__list')) {
+        [...group.children].forEach((el, i) => (el as HTMLElement).style.setProperty('--mo-i', String(i)));
+      }
+      const later = window.setTimeout(() => {
+        if (window.scrollY < window.innerHeight / 2) document.querySelectorAll<HTMLElement>('.facts dd').forEach(count);
+      }, 650);
+      signal.addEventListener('abort', () => clearTimeout(later));
+    }
+
+    const seen = new IntersectionObserver(
+      (entries) => {
+        // Las piezas que llegan juntas entran una tras otra.
+        const arriving = entries
+          .filter((entry) => entry.isIntersecting)
+          .map((entry) => entry.target as HTMLElement)
+          .sort((a, b) => {
+            const ra = a.getBoundingClientRect();
+            const rb = b.getBoundingClientRect();
+            return ra.top - rb.top || ra.left - rb.left;
+          });
+        arriving.forEach((el, i) => {
+          el.style.setProperty('--mo-d', String(Math.min(i, 7)));
+          el.classList.add('mo-in');
+          seen.unobserve(el);
+          const figure = el.matches(COUNTERS) ? el : el.querySelector<HTMLElement>(COUNTERS);
+          if (figure) count(figure);
+        });
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+    );
+    for (const el of marked) seen.observe(el);
+
+    // Deja todo como estaba: al cambiar de página o de modo.
+    function clear() {
+      seen.disconnect();
+      for (const el of marked) {
+        delete el.dataset.mo;
+        el.classList.remove('mo-in');
+        el.style.removeProperty('--mo-d');
+      }
+      for (const [el, text] of counting) el.textContent = text;
+    }
+    signal.addEventListener('abort', clear);
+
+    // Al entrar o salir de la escena fija, o al pedir menos movimiento, se rehace.
+    pinned.addEventListener('change', init, { signal });
+    still.addEventListener('change', init, { signal });
+  }
+
+  document.addEventListener('astro:page-load', init);
+  document.addEventListener('astro:before-swap', () => stop?.abort());
+</script>

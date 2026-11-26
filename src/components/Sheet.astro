@@ -16,8 +16,10 @@ interface Props {
   first?: boolean;
   // Superficie oscura, tipo terminal.
   dark?: boolean;
+  // En celular la hoja puede contar otra cosa: su rótulo, su título y la frase del personaje.
+  phone?: { eyebrow: string; title: string; say: string };
 }
-const { id, lang, eyebrow, title, first = false, dark = false } = Astro.props;
+const { id, lang, eyebrow, title, first = false, dark = false, phone } = Astro.props;
 const t = ui[lang];
 const sheet = sheetById(id);
 const cast = t.cast[sheet.pose as keyof typeof t.cast];
@@ -39,13 +41,40 @@ const floatSet = id in floatSets ? (id as FloatSet) : undefined;
   {floatSet && <Floaters set={floatSet} class="sheet__floaters" />}
   <div class="sheet__fig" aria-hidden="true">
     <Figure pose={sheet.pose} clip />
-    <p class="balloon balloon--side">{cast.say}</p>
-    <p class="mono sheet__role">{cast.role} · {t.figWord} {sheet.number}</p>
+    <p class="balloon balloon--side">
+      {phone ? (
+        <>
+          <span class="not-phone">{cast.say}</span>
+          <span class="only-phone">{phone.say}</span>
+        </>
+      ) : (
+        cast.say
+      )}
+    </p>
+    <p class="mono sheet__role">{cast.role}<span class="not-phone"> · {t.figWord} {sheet.number}</span></p>
   </div>
   <div class="sheet__in">
-    <p class="mono eyebrow">{t.sheetWord} {sheet.number} · {eyebrow}</p>
+    <p class="mono eyebrow">
+      <span class="not-phone">{t.sheetWord} {sheet.number} ·{' '}</span>
+      {phone ? (
+        <>
+          <span class="not-phone">{eyebrow}</span>
+          <span class="only-phone">{phone.eyebrow}</span>
+        </>
+      ) : (
+        eyebrow
+      )}
+    </p>
     <h2 class="sheet__title" id={`${id}-title`}>
-      <span class="detail" aria-hidden="true">{sheet.letter}</span>{title}
+      <span class="detail" aria-hidden="true">{sheet.letter}</span>
+      {phone ? (
+        <>
+          <span class="not-phone">{title}</span>
+          <span class="only-phone">{phone.title}</span>
+        </>
+      ) : (
+        title
+      )}
     </h2>
     <div class="dim sheet__dim" aria-hidden="true"><span>{sheet.number} / {sheetTotal}</span></div>
     <div class="sheet__body">

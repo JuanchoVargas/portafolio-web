@@ -8,7 +8,7 @@ export const site = {
   // solo dígitos (57 y el número). Correo: la dirección a la que se escribe.
   // Vacío: esa opción no se publica.
   whatsapp: '',
-  email: '',
+  email: 'juandiegov2002@gmail.com',
   // Dirección que recibe el formulario de contacto (un servicio de formularios
   // o una función propia). Vacío: la portada muestra los botones de LinkedIn y
   // GitHub en lugar del formulario.

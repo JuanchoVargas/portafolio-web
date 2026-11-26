@@ -13,10 +13,10 @@ gallery:
   - src: "../../../assets/projects/disksafe/02-advise.png"
     alt: "Terminal running disksafe advise: recommended Windows commands with their estimated gain, none of them executed"
 highlights:
-  - "Dry-run by default: nothing is deleted or moved until you pass -Execute"
-  - "A folder's source is removed only after every file matches by SHA-256 at the destination"
-  - "A single code path may delete and a single one may move, enforced by a static AST test"
-  - "Fails closed: a path that cannot be resolved is treated as protected"
+  - "Dry-run by default: nothing changes until you pass -Execute"
+  - "The source is removed only after every file matches by SHA-256"
+  - "One code path deletes and one moves, enforced by a test"
+  - "Fails closed: a path that cannot be resolved counts as protected"
 metrics:
   - value: "677"
     label: "passing tests"
@@ -28,19 +28,26 @@ metrics:
 
 ## The problem
 
-When the system drive fills up, the usual fixes are cleanup scripts copied from a forum or deleting folders by hand. Both can break Windows or lose work. I wanted a tool for people who manage their own machine that shows exactly what it will touch before it touches anything.
+When the system drive fills up, the usual fixes are cleanup scripts copied from a forum or deleting folders by hand. Both can break Windows or lose work. I wanted a tool that shows exactly what it will touch before it touches anything.
 
 ## What I built
 
-A PowerShell module with four commands. `scan` measures what takes up space and classifies each finding as safe to clean, movable, movable with a procedure, or do not touch. `advise` prints the native Windows commands worth running and their estimated gain, without running them. `clean` deletes old user temp files and browser, npm, pip and NuGet caches. `move` relocates repositories and data folders to another partition and keeps a journal so the operation can be undone.
+A PowerShell module with four commands, for Windows PowerShell 5.1 and PowerShell 7, with no external dependencies.
 
-It runs on Windows PowerShell 5.1 and PowerShell 7 with no external dependencies.
+- `scan` measures what takes up space and classifies each finding: safe to clean, movable, movable with a procedure, or do not touch.
+- `advise` prints the Windows commands worth running and their estimated gain, without running them.
+- `clean` deletes old user temp files and browser, npm, pip and NuGet caches.
+- `move` relocates repositories and data folders to another partition and keeps a journal so the operation can be undone.
 
 ## Safety by design
 
-A tool that deletes files has to fail toward the safe side. Protected paths live in one file, and validation resolves the real path through junctions, symlinks, short names and `..`, then repeats right before acting. Links are never followed. The copy never uses destructive robocopy options. Each operation writes its intent before acting and the result per item afterwards. The tool never elevates itself; it tells you which command needs an administrator.
+A tool that deletes files has to fail toward the safe side.
 
-A test parses the whole source tree and fails if any command that modifies the system appears outside the allowed files.
+- Protected paths live in one file, and the real path is resolved and validated again right before acting.
+- Links are never followed, and the copy never uses destructive robocopy options.
+- Each operation writes its intent before acting and the result per item afterwards.
+- It never elevates itself: it tells you which command needs an administrator.
+- A test parses the whole source tree and fails if anything modifies the system outside the allowed files.
 
 ## Status
 

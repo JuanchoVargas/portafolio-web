@@ -20,10 +20,10 @@ gallery:
   - src: "../../../assets/projects/kustom-disfraces/06-celular.png"
     alt: "La tienda en celular: catálogo, ficha de producto y guía de tallas"
 highlights:
-  - "El servidor recalcula cada precio por SKU y rechaza el pago si no coincide"
-  - "Una sola orden por pago, aunque la pasarela envíe varias notificaciones a la vez"
-  - "Un mismo motor de bot atiende WhatsApp, Messenger e Instagram y pasa a una persona cuando se pide"
-  - "Webhooks firmados que fallan cerrados: sin firma o sin secreto responden 401"
+  - "El servidor recalcula cada precio y rechaza el pago si no coincide"
+  - "Una sola orden por pago, aunque lleguen varias notificaciones"
+  - "Un solo bot atiende WhatsApp, Messenger e Instagram"
+  - "Webhooks firmados: sin firma o sin secreto responden 401"
 metrics:
   - value: "3"
     label: "canales de mensajería con un solo motor de bot"
@@ -39,13 +39,20 @@ Un negocio de disfraces de Bogotá necesitaba vender en línea sin reemplazar el
 
 ## Lo que construí
 
-Una tienda headless en Nuxt 4 desplegada en Vercel. WooCommerce conserva las órdenes y el inventario; PostgreSQL guarda lo que WooCommerce no modela. La tienda tiene catálogo por público y categoría, buscador, guía de tallas, carrito y checkout con Mercado Pago o cierre del pedido por WhatsApp.
+Una tienda headless en Nuxt 4 desplegada en Vercel. WooCommerce conserva las órdenes y el inventario, y PostgreSQL guarda lo que WooCommerce no modela.
 
-Alrededor de la tienda construí las herramientas con las que trabaja el equipo: un bot de ventas con búsqueda tolerante a errores de escritura y sugerencia de talla, una bandeja para tomar las conversaciones de los tres canales y un panel de inventario con edición masiva y vista previa antes de aplicar.
+- Tienda con catálogo por público y categoría, buscador, guía de tallas, carrito y pago con Mercado Pago o cierre del pedido por WhatsApp.
+- Bot de ventas con búsqueda tolerante a errores de escritura y sugerencia de talla.
+- Bandeja para tomar las conversaciones de los tres canales.
+- Panel de inventario con edición masiva y vista previa antes de aplicar.
 
 ## Seguridad
 
-El navegador solo habla con los endpoints del propio sitio. Las llaves de WooCommerce, Mercado Pago, Meta y el correo viven en el servidor, y WooCommerce tiene una llave de lectura y otra de escritura. El webhook de pagos exige una firma válida y reciente, y después consulta el estado real del pago en Mercado Pago en lugar de confiar en la notificación. Los webhooks de Meta se verifican sobre el cuerpo crudo. El panel limita los intentos de acceso por IP y guarda un HMAC de la IP, no la IP. Los logs enmascaran los identificadores de los clientes.
+- El navegador solo habla con el propio sitio; las llaves de WooCommerce, Mercado Pago, Meta y el correo viven en el servidor.
+- El webhook de pagos exige una firma válida y reciente, y después consulta el estado real del pago en Mercado Pago.
+- Los webhooks de Meta se verifican sobre el cuerpo crudo.
+- El panel limita los intentos de acceso por IP y guarda un HMAC de la IP, no la IP.
+- Los logs enmascaran los identificadores de los clientes.
 
 ## Resultado
 

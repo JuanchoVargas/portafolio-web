@@ -20,10 +20,10 @@ gallery:
   - src: "../../../assets/projects/crm-gestion-comercial/06-cartera.png"
     alt: "Accounts receivable with balances by age and the open documents of each customer"
 highlights:
-  - "One installation serves several companies, isolated by 43 global EF Core query filters"
-  - "Secure by default: every endpoint requires an authenticated user unless it is explicitly public"
-  - "Soft delete that records who deleted each record and when"
-  - "The API will not start without a strong JWT signing key"
+  - "One installation serves several companies, isolated by 43 filters"
+  - "Secure by default: every endpoint requires an authenticated user"
+  - "Soft delete: it records who deleted each record and when"
+  - "The API will not start without a strong signing key"
 metrics:
   - value: "349"
     label: "automated tests"
@@ -35,15 +35,25 @@ metrics:
 
 ## The problem
 
-A distributor sells many brands, each with its own pack sizes, margins and price lists, and delivers along fixed routes. Stock, purchasing and cash have to agree with what was sold. I wanted one installation that could serve several companies without their data ever mixing.
+A distributor sells many brands, each with its own pack sizes, margins and price lists, and delivers along fixed routes. Stock, purchasing and cash have to agree with what was sold, and one installation had to serve several companies without mixing their data.
 
 ## What I built
 
-A REST API in ASP.NET Core with a Vue 3 single-page app. The modules cover the catalog by brand with a setup wizard, price lists with margins per brand, customers with a delivery route derived from their district, suppliers and purchase orders with suggested quantities, warehouses with stock ledger and inventory valuation, quotes, orders and counter sales, cash accounts with a daily close, a dashboard and user management. Products, customers and stock can be imported from Excel with a preview.
+A REST API in ASP.NET Core with a Vue 3 single-page app. Products, customers and stock can be imported from Excel with a preview.
+
+- Catalog by brand and price lists with margins.
+- Customers with a delivery route, suppliers and purchase orders with suggested quantities.
+- Warehouses with stock ledger and inventory valuation.
+- Quotes, orders and counter sales.
+- Cash accounts with a daily close, a dashboard and user management.
 
 ## Security
 
-On login the API issues a token carrying the tenant claim. The database context reads it on every request and applies it through global query filters; with no tenant, queries return no rows. Skipping a filter requires an explicit call in the code. Controllers never delete rows physically. Admin operations require specific roles, and a server-side filter decides which controllers respond during the pilot, because hiding a menu is not a security control. Outside development, an unhandled error returns a generic response with a correlation code and the details go only to the log.
+- The token carries the tenant and the database context applies it through global query filters; with no tenant, queries return no rows.
+- Skipping a filter requires an explicit call in the code.
+- Controllers never delete rows physically.
+- Admin operations require specific roles, and a server-side filter decides what responds during the pilot: hiding a menu is not a security control.
+- An unhandled error returns a generic response with a correlation code; the details go only to the log.
 
 ## Result
 

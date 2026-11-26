@@ -1,5 +1,6 @@
 ---
 // La portada (hoja 01) y, después, la escena con el resto de las hojas.
+import { getImage, Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ContactForm from './ContactForm.astro';
 import DemoLab from './DemoLab.vue';
@@ -13,6 +14,12 @@ import { ui, type Lang } from '../i18n/ui';
 import { demoAgenda } from '../i18n/demo-agenda';
 import { demoBot } from '../i18n/demo-bot';
 import { demoQuote } from '../i18n/demo-quote';
+import { showcase } from '../i18n/showcase';
+import { links } from '../i18n/links';
+import shotStore from '../assets/projects/kustom-disfraces/06-celular.png';
+import shotAgenda from '../assets/projects/nemedi-clinic/02-calendario.png';
+import shotQuotes from '../assets/projects/crm-gestion-comercial/02-cotizaciones.png';
+import shotPanel from '../assets/projects/crm-gestion-comercial/01-panel.png';
 import { getProjects, projectPath } from '../lib/projects';
 import { sheetById, sheetTotal } from '../data/sheets';
 import { site } from '../data/site';
@@ -25,7 +32,13 @@ const { lang } = Astro.props;
 const t = ui[lang];
 const projects = await getProjects(lang);
 // En desarrollo el formulario se muestra aunque no tenga a dónde enviar.
-const showForm = Boolean(site.formEndpoint) || import.meta.env.DEV;
+const showForm = Boolean(site.formEndpoint || site.email) || import.meta.env.DEV;
+// En celular las demos se cambian por una vitrina: una captura por tarjeta.
+const show = showcase[lang];
+const l = links[lang];
+const showShots = [shotStore, shotAgenda, shotQuotes, shotPanel];
+// La versión más grande de cada una, para el visor.
+const showFull = await Promise.all(showShots.map((image) => getImage({ src: image, width: image.width })));
 
 const labels = {
   work: t.workEyebrow,
@@ -152,7 +165,38 @@ const work = sheetById('work');
       </div>
     </Sheet>
 
-    <Sheet id="demo" dark lang={lang} eyebrow={labels.demo} title={t.demoTitle}>
+    <Sheet
+      id="demo"
+      dark
+      lang={lang}
+      eyebrow={labels.demo}
+      title={t.demoTitle}
+      phone={{ eyebrow: show.demoEyebrow, title: show.demoTitle, say: show.demoSay }}
+    >
+      <div class="only-phone">
+        <ul class="show">
+          {
+            show.cards.map((card, i) => (
+              <li class="show__card">
+                <a href={showFull[i].src} data-zoom data-astro-reload data-caption={card.title} aria-label={`${l.zoom}: ${card.title}`}>
+                  <Image src={showShots[i]} alt="" widths={[480, 800]} sizes="80vw" loading="lazy" class="show__img" />
+                </a>
+                <span class="mono show__n" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')} / {String(show.cards.length).padStart(2, '0')}
+                </span>
+                <h3>{card.title}</h3>
+                <p>{card.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="note hand show__swipe">{show.swipe}</p>
+        <p class="show__cta">
+          <a class="btn btn--primary" href="#contact" data-quote={show.quote}>{show.want}</a>
+        </p>
+        <p class="show__desktop">{show.desktop}</p>
+      </div>
+      <div class="not-phone">
       <DemoLab
         client:visible
         label={t.demosLabel}
@@ -163,10 +207,33 @@ const work = sheetById('work');
         thousands={t.thousands}
         stamp={t.fictional}
       />
+      </div>
     </Sheet>
 
-    <Sheet id="security" dark lang={lang} eyebrow={labels.security} title={t.securityTitle}>
-      <DemoRoles client:visible t={t.demoRoles} stamp={t.fictional} />
+    <Sheet
+      id="security"
+      dark
+      lang={lang}
+      eyebrow={labels.security}
+      title={t.securityTitle}
+      phone={{ eyebrow: show.securityEyebrow, title: show.securityTitle, say: show.securitySay }}
+    >
+      <ul class="guards only-phone">
+        {
+          show.points.map((point) => (
+            <li>
+              <span class="guards__mark" aria-hidden="true">✓</span>
+              <div>
+                <h3>{point.title}</h3>
+                <p>{point.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="not-phone">
+        <DemoRoles client:visible t={t.demoRoles} stamp={t.fictional} />
+      </div>
     </Sheet>
 
     <Sheet id="services" lang={lang} eyebrow={labels.services} title={t.servicesTitle}>
@@ -233,13 +300,13 @@ const work = sheetById('work');
             showForm ? (
               <p class="links contact__alt">
                 {t.contactAlt}
-                <a class="link" href={site.linkedin} rel="noopener">LinkedIn</a>
-                <a class="link" href={site.github} rel="noopener">GitHub</a>
+                <a class="link" href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗<span class="visually-hidden"> ({l.newTab})</span></a>
+                <a class="link" href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗<span class="visually-hidden"> ({l.newTab})</span></a>
               </p>
             ) : (
               <p class="links contact__cta">
-                <a class="btn btn--primary" href={site.linkedin} rel="noopener">{t.contactLinkedin}</a>
-                <a class="btn" href={site.github} rel="noopener">{t.contactGithub}</a>
+                <a class="btn btn--primary" href={site.linkedin} target="_blank" rel="noopener noreferrer">{t.contactLinkedin} ↗<span class="visually-hidden"> ({l.newTab})</span></a>
+                <a class="btn" href={site.github} target="_blank" rel="noopener noreferrer">{t.contactGithub} ↗<span class="visually-hidden"> ({l.newTab})</span></a>
               </p>
             )
           }

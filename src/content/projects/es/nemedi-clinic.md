@@ -18,10 +18,10 @@ gallery:
   - src: "../../../assets/projects/nemedi-clinic/07-inventario-alertas.png"
     alt: "Alertas de inventario con los lotes vencidos y los que están por vencer"
 highlights:
-  - "Aislamiento entre clínicas con un filtro global de EF Core, comprobado por una prueba de extremo a extremo con dos clínicas"
-  - "Las fotos clínicas solo se entregan con URL firmada con HMAC que vence a los 10 minutos"
-  - "Cada petición autenticada vuelve a validar la cuenta, su rol y el estado de la clínica"
-  - "Inventario por lotes con salida del que vence primero y reporte de trazabilidad sanitaria"
+  - "Datos de cada clínica aislados, probado de extremo a extremo"
+  - "Fotos clínicas solo con enlace firmado que vence a los 10 minutos"
+  - "Cada petición vuelve a validar la cuenta, el rol y la clínica"
+  - "Inventario por lotes: sale primero lo que vence primero"
 metrics:
   - value: "313"
     label: "pruebas automatizadas"
@@ -33,17 +33,26 @@ metrics:
 
 ## El problema
 
-Una clínica estética en Colombia suele llevar la agenda en papel, el inventario en una hoja de cálculo y la caja en un cuaderno. La historia de cada paciente tiene datos de salud y fotos de antes y después, así que un sistema compartido debe aislar los datos de cada clínica.
+Una clínica estética suele llevar la agenda en papel, el inventario en una hoja de cálculo y la caja en un cuaderno. La historia de cada paciente tiene datos de salud y fotos, así que un sistema compartido debe aislar los datos de cada clínica.
 
 ## Lo que construí
 
-Una aplicación web donde cada clínica es un tenant con sus sedes y tres roles: dueño, recepción y esteticista. Cubre pacientes con importación desde Excel o CSV, historia clínica con comparador de fotos, consentimiento con firma en pantalla, agenda, paquetes de sesiones, inventario por lotes con alertas de vencimiento, ventas con IVA por línea y varios medios de pago, y caja por usuario y sede. Por encima, un nivel de plataforma administra las clínicas y los canales comerciales con marca blanca.
+Una aplicación web donde cada clínica es un tenant con sus sedes y tres roles: dueño, recepción y esteticista.
 
-El backend es una API por capas en ASP.NET Core sobre SQL Server. El frontend es una SPA en React que funciona en celular y se instala como PWA.
+- Pacientes, historia clínica con comparador de fotos y consentimiento con firma en pantalla.
+- Agenda y paquetes de sesiones.
+- Inventario por lotes con alertas de vencimiento.
+- Ventas con IVA por línea y caja por usuario y sede.
+
+API en ASP.NET Core sobre SQL Server y una SPA en React que funciona en celular y se instala como PWA. Un nivel de plataforma administra las clínicas y los canales comerciales con marca blanca.
 
 ## Seguridad
 
-El tenant viaja en el JWT y un filtro global lo aplica, junto con el borrado lógico, a todas las consultas. El tenant se asigna al guardar y nunca se toma de la petición. Los roles se validan en el servidor. Las contraseñas se guardan con BCrypt, el inicio de sesión limita los intentos por IP y por cuenta, y las credenciales de facturación se cifran con AES-GCM. Las imágenes se validan por su contenido y se les quitan los metadatos EXIF, IPTC y XMP. En producción la API no arranca con una clave de firma débil ni con CORS con comodines.
+- El tenant viaja en el JWT y un filtro global lo aplica a todas las consultas; nunca se toma de la petición.
+- Los roles se validan en el servidor.
+- Contraseñas con BCrypt, intentos de acceso limitados por IP y por cuenta, y credenciales de facturación cifradas con AES-GCM.
+- Las imágenes se validan por su contenido y se les quitan los metadatos.
+- En producción la API no arranca con una clave de firma débil ni con CORS con comodines.
 
 ## Resultado
 

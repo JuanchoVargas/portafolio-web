@@ -5,6 +5,7 @@
 // pendiente y sin enlace, para ver cómo queda.
 import { siWhatsapp } from 'simple-icons';
 import { contactFab } from '../i18n/contact-fab';
+import { links } from '../i18n/links';
 import type { Lang } from '../i18n/ui';
 import { site } from '../data/site';
 
@@ -73,9 +74,10 @@ const options = [
                   class="fab__option"
                   href={option.href}
                   target={option.external ? '_blank' : undefined}
-                  rel={option.external ? 'noopener' : undefined}
+                  rel={option.external ? 'noopener noreferrer' : undefined}
                 >
                   {inner}
+                  {option.external && <span class="visually-hidden"> ({links[lang].newTab})</span>}
                 </a>
               ) : (
                 <span class="fab__option fab__option--off">{inner}</span>

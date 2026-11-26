@@ -1,12 +1,14 @@
 ---
 import { ui, type Lang } from '../i18n/ui';
 import { site } from '../data/site';
+import { links } from '../i18n/links';
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const t = ui[lang];
+const l = links[lang];
 const year = new Date().getFullYear();
 ---
 
@@ -14,8 +16,8 @@ const year = new Date().getFullYear();
   <div class="wrap site-footer__in mono">
     <p>© {year} · {t.footerBuilt}</p>
     <p class="site-footer__links">
-      <a href={site.github} rel="noopener">GitHub</a>
-      <a href={site.linkedin} rel="noopener">LinkedIn</a>
+      <a href={site.github} target="_blank" rel="noopener noreferrer">GitHub ↗<span class="visually-hidden"> ({l.newTab})</span></a>
+      <a href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗<span class="visually-hidden"> ({l.newTab})</span></a>
     </p>
   </div>
 </footer>

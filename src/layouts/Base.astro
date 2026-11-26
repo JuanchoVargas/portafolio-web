@@ -4,6 +4,8 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import ContactFab from '../components/ContactFab.astro';
+import Motion from '../components/Motion.astro';
+import Lightbox from '../components/Lightbox.astro';
 import { ui, type Lang } from '../i18n/ui';
 
 interface Props {
@@ -65,5 +67,7 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     </main>
     <Footer lang={lang} />
     <ContactFab lang={lang} />
+    <Motion />
+    <Lightbox lang={lang} />
   </body>
 </html>

@@ -1,9 +1,10 @@
 ---
 import { render } from 'astro:content';
-import { Image } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Shot from './Shot.astro';
 import { ui, type Lang } from '../i18n/ui';
+import { links } from '../i18n/links';
 import { getProjects, homePath, projectPath, slugOf, type Project } from '../lib/projects';
 import { sheetById } from '../data/sheets';
 
@@ -13,6 +14,7 @@ interface Props {
 }
 const { project, lang } = Astro.props;
 const t = ui[lang];
+const l = links[lang];
 const d = project.data;
 const { Content } = await render(project);
 
@@ -21,6 +23,10 @@ const position = all.findIndex((p) => p.id === project.id);
 const next = all.length > 1 ? all[(position + 1) % all.length] : undefined;
 // En el cajetín, la página es un detalle de la hoja de proyectos.
 const letter = sheetById('work').letter;
+// Cada captura de la galería, con su versión más grande para el visor.
+const gallery = await Promise.all(
+  d.gallery.map(async (g) => ({ ...g, full: (await getImage({ src: g.src, width: g.src.width })).src })),
+);
 ---
 
 <Base
@@ -42,8 +48,20 @@ const letter = sheetById('work').letter;
       <h1 class="project__title">{d.title}</h1>
       <p class="project__tagline">{d.tagline}</p>
       <p class="links">
-        {d.live && <a class="btn btn--primary" href={d.live} rel="noopener">{t.viewLive} ↗</a>}
-        {d.repo && <a class="btn" href={d.repo} rel="noopener">{d.kind === 'source' ? t.viewCode : t.viewDocs} ↗</a>}
+        {
+          d.live && (
+            <a class="btn btn--primary" href={d.live} target="_blank" rel="noopener noreferrer">
+              {t.viewLive} ↗<span class="visually-hidden"> ({l.newTab})</span>
+            </a>
+          )
+        }
+        {
+          d.repo && (
+            <a class="btn" href={d.repo} target="_blank" rel="noopener noreferrer">
+              {d.kind === 'source' ? t.viewCode : t.viewDocs} ↗<span class="visually-hidden"> ({l.newTab})</span>
+            </a>
+          )
+        }
       </p>
     </header>
 
@@ -63,7 +81,7 @@ const letter = sheetById('work').letter;
     }
 
     <div class="wrap project__cover">
-      <Shot image={d.cover} alt={d.title} title={d.title} url={d.live} sizes="94vw" eager />
+      <Shot image={d.cover} alt={d.title} title={d.title} url={d.live} sizes="94vw" zoom={`${l.zoom}: ${d.title}`} eager />
     </div>
 
     <div class="wrap project__body">
@@ -99,19 +117,21 @@ const letter = sheetById('work').letter;
     </div>
 
     {
-      d.gallery.length > 0 && (
+      gallery.length > 0 && (
         <section class="wrap project__gallery">
           <h2 class="mono eyebrow">{t.projectGallery}</h2>
           <div class="gallery">
-            {d.gallery.map((g) => (
+            {gallery.map((g) => (
               <figure class="gallery__item">
-                <Image
-                  src={g.src}
-                  alt={g.alt}
-                  widths={[480, 800, 1200, 1600]}
-                  sizes="(min-width: 760px) 48vw, 92vw"
-                  loading="lazy"
-                />
+                <a href={g.full} data-zoom data-astro-reload data-caption={g.alt} aria-label={`${l.zoom}: ${g.alt}`}>
+                  <Image
+                    src={g.src}
+                    alt=""
+                    widths={[480, 800, 1200, 1600]}
+                    sizes="(min-width: 760px) 48vw, 92vw"
+                    loading="lazy"
+                  />
+                </a>
                 <figcaption>{g.alt}</figcaption>
               </figure>
             ))}

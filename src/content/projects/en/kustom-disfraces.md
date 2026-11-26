@@ -20,10 +20,10 @@ gallery:
   - src: "../../../assets/projects/kustom-disfraces/06-celular.png"
     alt: "The store on a phone: catalog, product page and size guide"
 highlights:
-  - "The server recalculates every price by SKU and rejects a payment that does not match"
-  - "Exactly one order per payment, even when the payment provider sends several notifications at once"
-  - "One bot engine serves WhatsApp, Messenger and Instagram, and hands over to a person on request"
-  - "Signed webhooks that fail closed: no signature or no secret means a 401"
+  - "The server recalculates every price and rejects a mismatched payment"
+  - "Exactly one order per payment, even with repeated notifications"
+  - "One bot serves WhatsApp, Messenger and Instagram"
+  - "Signed webhooks: no signature or no secret means a 401"
 metrics:
   - value: "3"
     label: "messaging channels on one bot engine"
@@ -39,13 +39,20 @@ A costume shop in Bogotá needed to sell online without replacing the WooCommerc
 
 ## What I built
 
-A headless Nuxt 4 storefront deployed on Vercel. WooCommerce keeps orders and inventory; PostgreSQL stores what WooCommerce does not model. The store has a catalog by audience and category, search, a size guide, a cart, and checkout with Mercado Pago or a hand-off to WhatsApp.
+A headless Nuxt 4 storefront deployed on Vercel. WooCommerce keeps orders and inventory, and PostgreSQL stores what WooCommerce does not model.
 
-Around the store I built the tools the team works with: a sales bot with typo-tolerant product search and size suggestions, an inbox to take over conversations from the three channels, and an inventory panel with bulk edits previewed before they are applied.
+- A store with a catalog by audience and category, search, a size guide, a cart, and checkout with Mercado Pago or a hand-off to WhatsApp.
+- A sales bot with typo-tolerant product search and size suggestions.
+- An inbox to take over conversations from the three channels.
+- An inventory panel with bulk edits previewed before they are applied.
 
 ## Security
 
-The browser only talks to the site's own endpoints. Keys for WooCommerce, Mercado Pago, Meta and email live on the server, with separate read and write keys for WooCommerce. The payment webhook requires a valid signature with a recent timestamp and then asks Mercado Pago for the real payment status instead of trusting the notification. Meta webhooks are verified over the raw request body. The admin panel limits login attempts per IP and stores an HMAC of the IP, not the IP. Logs mask customer identifiers.
+- The browser only talks to the site itself; keys for WooCommerce, Mercado Pago, Meta and email live on the server.
+- The payment webhook requires a valid, recent signature and then asks Mercado Pago for the real payment status.
+- Meta webhooks are verified over the raw request body.
+- The admin panel limits login attempts per IP and stores an HMAC of the IP, not the IP.
+- Logs mask customer identifiers.
 
 ## Result
 

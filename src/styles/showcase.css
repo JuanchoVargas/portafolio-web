@@ -1,0 +1,201 @@
+/* ---------- Celular ----------
+   En celular la portada pone al personaje en la primera pantalla y las demos
+   interactivas se cambian por una vitrina: quien entra desde el teléfono
+   viene a mirar, no a probar una tabla. */
+.only-phone {
+  display: none !important;
+}
+
+/* Vitrina: tarjetas con captura que se deslizan de lado. */
+.show {
+  display: flex;
+  gap: 14px;
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 6px var(--gutter) 14px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  scrollbar-width: none;
+}
+.show::-webkit-scrollbar {
+  display: none;
+}
+.show__card {
+  flex: 0 0 82%;
+  scroll-snap-align: start;
+  border: var(--line);
+  border-radius: var(--radius);
+  background: var(--sheet);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+.show__img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: top left;
+  border-bottom: var(--line);
+}
+.show__n {
+  display: block;
+  margin: 12px 14px 0;
+  color: var(--spot-text);
+}
+.show__card h3 {
+  margin: 4px 14px 0;
+  font-size: 22px;
+  line-height: 1.05;
+}
+.show__card p {
+  margin: 6px 14px 16px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.show__swipe {
+  margin-top: 4px;
+}
+.show__cta {
+  margin-top: 18px;
+}
+.show__cta .btn {
+  display: block;
+  text-align: center;
+}
+.show__desktop {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Las garantías de seguridad, en corto. */
+.guards {
+  display: grid;
+  gap: 12px;
+}
+.guards li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border: var(--line);
+  border-radius: var(--radius);
+  background: var(--sheet);
+  box-shadow: var(--shadow-sm);
+}
+.guards__mark {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--spot);
+  color: var(--spot-ink);
+  font: 600 15px/1 var(--mono);
+}
+.guards h3 {
+  font-size: 20px;
+  line-height: 1.05;
+}
+.guards p {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+@media (max-width: 719px) {
+  .only-phone {
+    display: revert !important;
+  }
+  ul.only-phone.guards {
+    display: grid !important;
+  }
+  .not-phone {
+    display: none !important;
+  }
+
+  /* Portada: título, personaje y botones caben en la primera pantalla. */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding-top: 20px;
+  }
+  .hero__text {
+    display: contents;
+  }
+  .hero__title {
+    order: 1;
+    font-size: clamp(36px, 11.4vw, 50px);
+  }
+  .hero__stage {
+    order: 2;
+  }
+  .hero__cta {
+    order: 3;
+    margin-top: 18px;
+  }
+  .hero__lead {
+    order: 4;
+  }
+  .hero__stamp {
+    order: 5;
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+  .hero__dim {
+    order: 6;
+  }
+  .facts {
+    order: 7;
+  }
+  .hero__fig {
+    height: 280px;
+    margin-top: 76px;
+  }
+  .hero__cta .btn {
+    flex: 1 1 0;
+    text-align: center;
+  }
+  /* En celular primero va lo que vende y al final el perfil: vitrina,
+     servicios, proyectos, seguridad, experiencia y contacto. Como el orden
+     ya no es el del plano, se ocultan los números de hoja. */
+  .scene__body {
+    display: flex;
+    flex-direction: column;
+  }
+  #demo {
+    order: 1;
+  }
+  #services {
+    order: 2;
+  }
+  #work {
+    order: 3;
+  }
+  #security {
+    order: 4;
+  }
+  #about {
+    order: 5;
+  }
+  #contact {
+    order: 6;
+    border-bottom: 0;
+  }
+  .scene__body > .sheet:not(#contact) {
+    border-bottom: var(--line);
+  }
+  .sheet__dim,
+  .sheet__title .detail {
+    display: none;
+  }
+  /* La guía de lectura explica la escena fija, que en celular no existe. */
+  .legend {
+    display: none;
+  }
+}

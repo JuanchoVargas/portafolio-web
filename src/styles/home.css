@@ -306,15 +306,29 @@
   }
   /* Sentado es más ancho: el globo va sobre la mesa. */
   .sheet .sheet__fig .fig--desk {
-    height: calc(var(--bust) * 1.28);
-    margin-inline: 0 calc(var(--bust) * -0.16);
+    align-self: flex-end;
+    height: calc(var(--bust) * 0.86);
+    margin-inline: 0;
   }
-  .sheet__fig:has(.fig--desk) .balloon {
+  /* La mesa va al borde derecho y el globo arriba a la izquierda, sobre ella. */
+  .sheet .sheet__fig:has(.fig--desk) {
+    flex-direction: row;
+    justify-content: flex-end;
+    padding-inline: 0;
+  }
+  .sheet .sheet__fig:has(.fig--desk) .balloon {
     position: absolute;
     left: var(--gutter);
-    top: 10px;
-    max-width: 15ch;
+    top: 12px;
+    max-width: 19ch;
     margin: 0;
+  }
+  .sheet .sheet__fig:has(.fig--desk) .balloon--side::after {
+    display: none;
+  }
+  .sheet .sheet__fig:has(.fig--desk) .sheet__role {
+    right: auto;
+    left: var(--gutter);
   }
 }
 

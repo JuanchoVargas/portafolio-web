@@ -1,0 +1,313 @@
+/* ---------- Movimiento al bajar ----------
+   Tres capas, de menos a más dependiente del navegador:
+   1. Entradas al cargar (solo CSS): la portada apilada y la cabecera de cada
+      proyecto.
+   2. Entradas al llegar a cada pieza: Motion.astro marca las piezas con
+      `data-mo` y les pone `.mo-in` cuando entran en pantalla. Los estados
+      ocultos solo existen bajo `.motion`, la clase que pone ese script: sin
+      script, todo se ve.
+   3. Movimiento atado al scroll (`animation-timeline`), donde el navegador lo
+      soporta.
+   Con movimiento reducido no corre nada: base.css apaga las animaciones y
+   Motion.astro no marca ninguna pieza. Solo se animan opacidad, traslación,
+   escala, giro y recorte: nada cambia de tamaño ni empuja a lo de al lado. */
+
+.mo-progress {
+  display: none;
+}
+
+/* ---------- 1. Al cargar ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* Cabecera de proyecto, en cualquier pantalla. */
+  .project__title {
+    animation: mo-wipe 0.7s var(--ease) backwards;
+  }
+  .project__tagline {
+    animation: mo-rise 0.6s var(--ease) 0.18s backwards;
+  }
+}
+
+/* La portada apilada: celular, pantallas bajas. Con la escena fija de
+   escritorio la portada no se toca. */
+@media (prefers-reduced-motion: no-preference) and ((max-width: 999px) or (max-height: 699px)) {
+  .hero__title {
+    animation: mo-wipe 0.75s var(--ease) backwards;
+  }
+  .hero__fig .fig {
+    animation: mo-rise-far 0.8s var(--ease) 0.15s backwards;
+  }
+  .hero__fig .balloon {
+    transform-origin: 50% 100%;
+    animation: mo-pop 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) 0.75s backwards;
+  }
+  .hero__cta {
+    animation: mo-rise 0.6s var(--ease) 0.4s backwards;
+  }
+  .hero__lead {
+    animation: mo-rise 0.6s var(--ease) 0.5s backwards;
+  }
+}
+
+/* ---------- 2. Al llegar a cada pieza ---------- */
+.motion [data-mo]:not(.mo-in) {
+  opacity: 0;
+}
+.motion [data-mo].mo-in {
+  animation: mo-rise 0.6s var(--ease) calc(var(--mo-d, 0) * 80ms) backwards;
+}
+/* Título: se destapa de arriba abajo mientras sube. */
+.motion [data-mo='title'].mo-in {
+  animation-name: mo-wipe;
+  animation-duration: 0.7s;
+}
+/* El personaje asoma desde su borde. */
+.motion [data-mo='side-left'].mo-in {
+  animation-name: mo-from-left;
+  animation-duration: 0.75s;
+}
+.motion [data-mo='side-right'].mo-in {
+  animation-name: mo-from-right;
+  animation-duration: 0.75s;
+}
+/* El globo salta después, desde el lado del personaje. */
+.motion [data-mo='pop'].mo-in {
+  animation: mo-pop 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) calc(0.35s + var(--mo-d, 0) * 80ms) backwards;
+}
+.motion .sheet[data-side='left'] .sheet__fig [data-mo='pop'] {
+  transform-origin: 0 60%;
+}
+.motion .sheet[data-side='right'] .sheet__fig [data-mo='pop'] {
+  transform-origin: 100% 60%;
+}
+/* Etiquetas: aparecen rápido, una tras otra. */
+.motion [data-mo='chip'].mo-in {
+  animation: mo-pop 0.3s var(--ease) calc(var(--mo-d, 0) * 35ms) backwards;
+}
+/* Tarjetas de la vitrina: entran de lado, también al deslizarlas. */
+.motion [data-mo='slide'].mo-in {
+  animation-name: mo-from-right;
+  animation-duration: 0.65s;
+}
+/* Recortes: caen torcidos y se enderezan a su giro; después se pega la cinta. */
+.motion [data-mo='drop'].mo-in {
+  animation: mo-drop 0.7s cubic-bezier(0.2, 1.2, 0.3, 1) calc(var(--mo-d, 0) * 110ms) backwards;
+}
+.motion [data-mo='drop'].mo-in::before {
+  animation: mo-tape 0.32s var(--ease) calc(0.5s + var(--mo-d, 0) * 110ms) backwards;
+}
+
+@keyframes mo-rise {
+  from {
+    opacity: 0;
+    translate: 0 26px;
+  }
+}
+@keyframes mo-rise-far {
+  from {
+    opacity: 0;
+    translate: 0 60px;
+  }
+}
+@keyframes mo-wipe {
+  from {
+    clip-path: inset(0 -6% 100% -6%);
+    translate: 0 22px;
+  }
+  to {
+    clip-path: inset(-12% -6% -18% -6%);
+  }
+}
+@keyframes mo-from-left {
+  from {
+    opacity: 0;
+    translate: -72px 0;
+  }
+}
+@keyframes mo-from-right {
+  from {
+    opacity: 0;
+    translate: 72px 0;
+  }
+}
+@keyframes mo-pop {
+  from {
+    opacity: 0;
+    scale: 0.5;
+  }
+}
+@keyframes mo-drop {
+  from {
+    opacity: 0;
+    translate: 0 -38px;
+    rotate: calc(var(--r, 0deg) - 9deg);
+    scale: 1.06;
+  }
+}
+/* La cinta llega desde arriba, grande, y se asienta. */
+@keyframes mo-tape {
+  from {
+    opacity: 0;
+    translate: -50% -18px;
+    scale: 1.5;
+  }
+}
+
+@media print {
+  .motion [data-mo] {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- 3. Atado al scroll ---------- */
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    /* Barra de lectura: cuánto de la página se ha recorrido. */
+    .mo-progress {
+      display: block;
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 60;
+      height: 3px;
+      background: var(--spot);
+      transform-origin: 0 50%;
+      scale: 0 1;
+      pointer-events: none;
+      animation: mo-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+
+    /* La portada de cada proyecto llega pequeña y se asienta al subir. */
+    .project__cover .shot {
+      animation: mo-settle linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 32%;
+    }
+  }
+
+  /* Solo en modo apilado: en la escena fija estas piezas no se ven o las
+     mueve la escena. */
+  @media (prefers-reduced-motion: no-preference) and ((max-width: 999px) or (max-height: 699px)) {
+    /* El personaje de la portada se aleja mientras se baja. */
+    .hero__fig {
+      animation: mo-leave linear both;
+      animation-timeline: view();
+      animation-range: exit 10% exit 100%;
+    }
+    /* El de cada hoja se desliza un poco dentro de su recuadro. */
+    .sheet__fig .fig > img,
+    .sheet__fig .fig > video {
+      animation: mo-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes mo-progress {
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes mo-settle {
+  from {
+    opacity: 0.45;
+    translate: 0 44px;
+    scale: 0.9;
+  }
+}
+@keyframes mo-leave {
+  to {
+    opacity: 0.25;
+    translate: 0 34px;
+    scale: 0.88;
+  }
+}
+@keyframes mo-drift {
+  from {
+    translate: 0 16px;
+  }
+  to {
+    translate: 0 -16px;
+  }
+}
+
+/* ---------- 4. Escena fija de escritorio ----------
+   La escena ya pasa las hojas y mueve al personaje. Aquí cada hoja, al
+   activarse, hace entrar sus piezas: el título se destapa y lo demás llega
+   escalonado. `--mo-i` (el puesto de cada pieza) lo pone Motion.astro. */
+@media (min-width: 1000px) and (min-height: 700px) and (prefers-reduced-motion: no-preference) {
+  /* Portada, al cargar. */
+  .js .hero__title {
+    animation: mo-wipe 0.8s var(--ease) backwards;
+  }
+  .js .hero__lead {
+    animation: mo-rise 0.6s var(--ease) 0.25s backwards;
+  }
+  .js .hero__cta {
+    animation: mo-rise 0.6s var(--ease) 0.38s backwards;
+  }
+  .js .facts > div {
+    animation: mo-rise 0.5s var(--ease) backwards;
+  }
+  .js .facts > div:nth-child(1) {
+    animation-delay: 0.5s;
+  }
+  .js .facts > div:nth-child(2) {
+    animation-delay: 0.58s;
+  }
+  .js .facts > div:nth-child(3) {
+    animation-delay: 0.66s;
+  }
+  .js .facts > div:nth-child(4) {
+    animation-delay: 0.74s;
+  }
+  .js .hero__fig .fig {
+    animation: mo-rise-far 0.9s var(--ease) 0.2s backwards;
+  }
+  .js .hero__fig .balloon {
+    transform-origin: 50% 100%;
+    animation: mo-pop 0.45s cubic-bezier(0.2, 1.5, 0.4, 1) 0.95s backwards;
+  }
+  .js .legend {
+    animation: mo-rise 0.6s var(--ease) 0.9s backwards;
+  }
+
+  /* Cada hoja, al activarse. */
+  .js .sheet.is-on .eyebrow {
+    animation: mo-rise 0.45s var(--ease) 0.05s backwards;
+  }
+  .js .sheet.is-on .sheet__title {
+    animation: mo-wipe 0.7s var(--ease) 0.12s backwards;
+  }
+  /* Recortes de proyectos: caen torcidos y se pega la cinta. */
+  .js .sheet.is-on .pcut {
+    animation: mo-drop 0.7s cubic-bezier(0.2, 1.2, 0.3, 1) calc(0.2s + var(--mo-i, 0) * 110ms) backwards;
+  }
+  .js .sheet.is-on .pcut::before {
+    animation: mo-tape 0.32s var(--ease) calc(0.7s + var(--mo-i, 0) * 110ms) backwards;
+  }
+  /* Filas y renglones: suben uno tras otro. */
+  .js .sheet.is-on :is(.list, .xp, .creds) > li {
+    animation: mo-rise 0.5s var(--ease) calc(0.22s + var(--mo-i, 0) * 80ms) backwards;
+  }
+  .js .sheet.is-on .chips > li {
+    animation: mo-pop 0.3s var(--ease) calc(0.45s + var(--mo-i, 0) * 30ms) backwards;
+  }
+  .js .sheet.is-on .review {
+    animation: mo-drop 0.7s cubic-bezier(0.2, 1.2, 0.3, 1) 0.5s backwards;
+  }
+  .js .sheet.is-on .review::before {
+    animation: mo-tape 0.32s var(--ease) 1s backwards;
+  }
+  /* Bloques enteros: las demos, el texto del perfil y el formulario. */
+  .js .sheet.is-on :is(.lab, .sheet__body > .not-phone > .demo, .about__text > p, .contact > div, .form) {
+    animation: mo-rise 0.6s var(--ease) 0.22s backwards;
+  }
+  .js .sheet.is-on .form {
+    animation-delay: 0.36s;
+  }
+  .js .sheet.is-on .note {
+    animation: mo-rise 0.5s var(--ease) 0.7s backwards;
+  }
+}

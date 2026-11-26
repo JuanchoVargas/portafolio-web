@@ -13,6 +13,8 @@ const t = ui[lang];
 if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
   throw new Error('site.formEndpoint debe empezar por https://');
 }
+// Sin servicio que reciba el formulario, el mensaje sale por el correo del visitante.
+const byMail = !site.formEndpoint && Boolean(site.email);
 ---
 
 <form
@@ -24,6 +26,8 @@ if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
   data-error={t.formError}
   data-offline={t.formOffline}
   data-sending={t.formSending}
+  data-mail={byMail ? site.email : undefined}
+  data-mail-ok={t.formOkMail}
 >
   <div class="form__row">
     <p class="field">
@@ -44,7 +48,7 @@ if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
     <input id="cf-check" name="leave_empty" type="text" tabindex="-1" autocomplete="off" />
   </p>
   <button class="btn btn--primary" type="submit">{t.formSend}</button>
-  <p class="form__note" data-form-note role="status">{t.formNote}</p>
+  <p class="form__note" data-form-note role="status">{byMail ? t.formNoteMail : t.formNote}</p>
 </form>
 
 <script>
@@ -63,6 +67,16 @@ if (site.formEndpoint && !site.formEndpoint.startsWith('https://')) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const endpoint = form.getAttribute('action');
+      // Por correo: se arma el mensaje y lo abre la aplicación del visitante.
+      if (!endpoint && form.dataset.mail) {
+        const field = (name: string) => String(new FormData(form).get(name) ?? '').trim();
+        if (field('leave_empty')) return;
+        const subject = `Portafolio: ${field('name')}`;
+        const body = `${field('message')}\n\n${field('name')}\n${field('email')}`;
+        location.href = `mailto:${form.dataset.mail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        tell('ok', form.dataset.mailOk);
+        return;
+      }
       if (!endpoint) {
         tell('error', form.dataset.offline);
         return;
