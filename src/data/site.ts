@@ -12,7 +12,7 @@ export const site = {
   // Dirección que recibe el formulario de contacto (un servicio de formularios
   // o una función propia). Vacío: la portada muestra los botones de LinkedIn y
   // GitHub en lugar del formulario.
-  formEndpoint: '',
+  formEndpoint: 'https://formspree.io/f/xvkaydpk',
   // Muestra la etiqueta de disponibilidad en la portada.
   available: true,
 };
