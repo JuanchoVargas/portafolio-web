@@ -82,19 +82,19 @@
   color: var(--spot-text);
 }
 
-/* Cambio de idioma: los dos a la vista, con el aspecto del botón flotante de
-   contacto (fab.css) para que se lea como un control. */
+/* Cambio de idioma: una pastilla con el aspecto del botón flotante de contacto
+   (fab.css). Muestra el idioma al que lleva. */
 .lang {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
-  height: 40px;
-  padding: 0 4px 0 10px;
+  gap: 6px;
+  height: 32px;
+  padding: 0 11px 0 8px;
   border: 2px solid var(--spot-ink);
   border-radius: 999px;
   background: var(--spot);
   color: var(--spot-ink);
-  box-shadow: 4px 4px 0 var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
   font-size: 12px;
   font-weight: 600;
   line-height: 1;
@@ -106,43 +106,55 @@
 }
 .lang:hover {
   translate: -1px -1px;
-  box-shadow: 5px 5px 0 var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
 }
 .lang:active {
   translate: 2px 2px;
-  box-shadow: 2px 2px 0 var(--ink);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+.lang:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 .lang__globe {
-  width: 20px;
-  height: 20px;
-  margin-right: 4px;
+  width: 17px;
+  height: 17px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.lang__opt {
-  min-width: 34px;
-  padding: 8px 9px;
-  border-radius: 999px;
-  text-align: center;
-}
-/* El idioma actual, en negativo. */
-.lang__opt.is-on {
-  background: var(--spot-ink);
-  color: var(--spot);
-}
-a.lang__opt:hover {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-a.lang__opt:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+
+/* Con puntero, los enlaces del menú toman ese mismo aspecto al pasar por
+   encima. El borde ya ocupa su sitio para que nada se mueva. */
+@media (hover: hover) and (min-width: 621px) {
+  .nav {
+    gap: clamp(0px, 0.6vw, 8px);
+  }
+  .nav a {
+    padding: 7px 10px;
+    border: 2px solid transparent;
+    border-radius: 999px;
+    transition:
+      translate 0.15s var(--ease),
+      box-shadow 0.15s var(--ease);
+  }
+  .nav a:hover {
+    border-color: var(--spot-ink);
+    background: var(--spot);
+    color: var(--spot-ink);
+    box-shadow: 3px 3px 0 var(--ink);
+    translate: -1px -1px;
+  }
+  .nav a:active {
+    translate: 2px 2px;
+    box-shadow: 1px 1px 0 var(--ink);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lang {
+  .lang,
+  .nav a {
     transition: none;
   }
 }
